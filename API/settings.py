@@ -52,11 +52,11 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 # Static asset configuration
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-STATIC_URL = './API/static/'
-STATIC_ROOT = './API/static'
+STATIC_URL = '/static/'
+STATIC_ROOT = 'static'
 
 STATIC_DIRS = (
-    os.path.join(BASE_DIR, 'API/static'),
+    os.path.join(BASE_DIR, 'static'),
     )
 
 # Default Set of DEBUG is False
