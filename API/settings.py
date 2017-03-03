@@ -56,7 +56,7 @@ STATIC_URL = '/static/'
 STATIC_ROOT = './API/static'
 
 STATIC_DIRS = (
-    os.path.join(BASE_DIR, 'static'),
+    os.path.join(BASE_DIR, 'API/static'),
     )
 
 # Default Set of DEBUG is False
