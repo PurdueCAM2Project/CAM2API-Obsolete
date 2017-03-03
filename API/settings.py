@@ -65,22 +65,22 @@ STATIC_ROOT = os.path.join(PROJECT_ROOT, 'staticfiles')
 STATIC_URL = '/static/'
 
 # # HEROKU Database
-# STATICFILES_DIRS = (
-#     os.path.join(PROJECT_ROOT, 'static'),
-#     )
+STATICFILES_DIRS = (
+    os.path.join(PROJECT_ROOT, 'static'),
+    )
 
 
 # Local Database
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'cam2api',
-        'USER': 'cam2api',
-        'PASSWORD': 'no1234',
-        'HOST': 'localhost',
-        'PORT': '',
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'cam2api',
+#         'USER': 'cam2api',
+#         'PASSWORD': 'no1234',
+#         'HOST': 'localhost',
+#         'PORT': '',
+#     }
+# }
 
 
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
