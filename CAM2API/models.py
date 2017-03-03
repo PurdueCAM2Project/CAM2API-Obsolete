@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 
 from django.db import models
+from django.contrib.gis.db import models as gisModels
 
 # Create your models here.
 class Camera(models.Model):
@@ -9,6 +10,7 @@ class Camera(models.Model):
 	city = models.CharField(max_length=30, null=False)
 	state = models.CharField(max_length=12, null=True)
 	country = models.CharField(max_length=50, null=False)
+	lat_lng = gisModels.GeometryField(geography=True) # Sets geometry field points to geography in postgis
 	# Source Information:
 	source = models.CharField(max_length=30, null=False)
 	source_url = models.CharField(max_length=100, null=False) # URL of source (Not for image data!)

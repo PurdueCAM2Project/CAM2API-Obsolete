@@ -7,7 +7,7 @@ from base_settings import *
 import os
 
 """
-This Below are the setting information for the production environment
+This Below are the setting information for the PRODUCTION environment
 CAM2API
 """
 
@@ -29,6 +29,17 @@ CAM2API
 # STATIC_DIRS = (
 #     os.path.join(BASE_DIR, 'static'),
 #     )
+
+# # Database
+# # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
+
+# DATABASES = {
+#     'default': {
+#     }
+# }
+
+# DATABASES['default'] = dj_database_url.config()
+
 
 # # Default Set of DEBUG is False
 # DEBUG = False
@@ -53,9 +64,24 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 STATIC_ROOT = os.path.join(PROJECT_ROOT, 'staticfiles')
 STATIC_URL = '/static/'
 
+# # HEROKU Database
 # STATICFILES_DIRS = (
 #     os.path.join(PROJECT_ROOT, 'static'),
 #     )
+
+
+# Local Database
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'cam2api',
+        'USER': 'cam2api',
+        'PASSWORD': 'no1234',
+        'HOST': 'localhost',
+        'PORT': '',
+    }
+}
+
 
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 
