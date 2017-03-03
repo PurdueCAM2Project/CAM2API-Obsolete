@@ -50,13 +50,11 @@ ALLOWED_HOSTS = ['*']
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # Static asset configuration
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+STATIC_ROOT = os.pah.join(PROJECT_ROOT, 'staticfiles')
 STATIC_URL = '/static/'
-STATIC_ROOT = 'static'
 
-STATIC_DIRS = (
-    os.path.join(BASE_DIR, 'static'),
+STATICFILES_DIRS = (
+    os.path.join(PROJECT_ROOT, 'static'),
     )
 
 # Default Set of DEBUG is False
