@@ -10,7 +10,7 @@ class Camera(models.Model):
 	city = models.CharField(max_length=30, null=False)
 	state = models.CharField(max_length=12, null=True)
 	country = models.CharField(max_length=50, null=False)
-	lat_lng = gisModels.GeometryField(geography=True) # Sets geometry field points to geography in postgis
+	lat_lng = gisModels.GeometryField(geography=True, null=False, default=0) # Sets geometry field points to geography in postgis
 	# Source Information:
 	source = models.CharField(max_length=30, null=False)
 	source_url = models.CharField(max_length=100, null=False) # URL of source (Not for image data!)
