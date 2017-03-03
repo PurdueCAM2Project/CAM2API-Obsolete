@@ -81,12 +81,13 @@ DATABASES = {
 }
 
 DATABASES['default'] = dj_database_url.config()
-# DATABASES['default']['ENGINE'] = 'django.contrib.gis.db.backends.postgis'
+DATABASES['default']['ENGINE'] = 'django.contrib.gis.db.backends.postgis'
 
 
 # Local Database
 # DATABASES = {
 #     'default': {
+#         'ENGINE': 'django.contrib.gis.db.backends.postgis',
 #         'ENGINE': 'django.db.backends.postgresql_psycopg2',
 #         'NAME': 'cam2api',
 #         'USER': 'cam2api',
