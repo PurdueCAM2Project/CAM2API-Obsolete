@@ -64,10 +64,23 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 STATIC_ROOT = os.path.join(PROJECT_ROOT, 'staticfiles')
 STATIC_URL = '/static/'
 
-# # HEROKU Database
-STATICFILES_DIRS = (
-    os.path.join(PROJECT_ROOT, 'static'),
-    )
+# Using white noise to collect static files on production
+STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage' 
+
+# # More Static File Collection
+# STATICFILES_DIRS = (
+#     os.path.join(PROJECT_ROOT, 'static'),
+#     )
+
+# https://docs.djangoproject.com/en/1.10/ref/settings/#databases
+
+# Heroku Database
+DATABASES = {
+    'default': {
+    }
+}
+
+DATABASES['default'] = dj_database_url.config()
 
 
 # Local Database
@@ -83,7 +96,6 @@ STATICFILES_DIRS = (
 # }
 
 
-STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 
 # Default Set of DEBUG is False
 DEBUG = True
