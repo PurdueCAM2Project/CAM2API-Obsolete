@@ -4,16 +4,18 @@ CAM2API
 """
 
 import os
-# Import settings specific to deployment
 
+# Import settings specific to deployment
 try:
     from settings_local import *
+    print("IMPORTED LOCAL")
 except ImportError:
     try:
         from settings_remote import *
+        print("IMPORTED REMOTE")
     except ImportError:
         pass
-        
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
