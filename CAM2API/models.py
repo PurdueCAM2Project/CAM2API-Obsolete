@@ -22,8 +22,8 @@ class Camera(models.Model):
 	date_added = models.DateTimeField(auto_now_add=True)
 	last_updated = models.DateTimeField() # Last known time a snapshot was downloaded
 	# Camera Types (Non_ip or IP)
-	CAMERA_TYPES = enumerate(['Non_ip', 'IP'])
-	camera_type = models.CharField(max_length=10, null=False, choices=CAMERA_TYPES)
+	CAMERA_TYPES = enumerate(['Non_IP', 'IP'])
+	camera_type = models.CharField(max_length=10, null=False, choices=CAMERA_TYPES, default='Non_IP')
 	# More Info:
 	description = models.CharField(max_length=100, null=True) # Description of the camera
 	is_video = models.BooleanField() # True if camera is a video stream 
