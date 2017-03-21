@@ -5,7 +5,6 @@ control.
 """
 import dj_database_url
 import os
-import environ
 
 """
 This Below are the setting information for the DEVELOPMENT environment
@@ -15,7 +14,7 @@ CAM2API
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '7t@@r3(twocu_9j+hawhl+m3#1$n9thgs7=jb%m!=w-ig!315*'
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 
 # Allow all host headers
 ALLOWED_HOSTS = ['*']
@@ -36,8 +35,8 @@ STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 #     )
 
 # Get geoDjango GEOS and GDAL library paths from Heroku environment variables
-GEOS_LIBRARY_PATH = environ.get('GEOS_LIBRARY_PATH')
-GDAL_LIBRARY_PATH = environ.get('GDAL_LIBRARY_PATH')
+GEOS_LIBRARY_PATH = os.environ.get('GEOS_LIBRARY_PATH')
+GDAL_LIBRARY_PATH = os.environ.get('GDAL_LIBRARY_PATH')
 
 
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
