@@ -1,104 +1,106 @@
 """
-Django settings for API project.
-Specific settings are imported other setting libraries for better
-control. 
+This file holds all the general setting information for the
+CAM2API
 """
-from base_settings import *
+
 import os
-import dj_database_url
 
-"""
-This Below are the setting information for the PRODUCTION environment
-CAM2API
-"""
-
-# # SECURITY WARNING: keep the secret key used in production secret!
-# SECRET_KEY = '7t@@r3(twocu_9j+hawhl+m3#1$n9thgs7=jb%m!=w-ig!315*'
-
-# # Allow all host headers
-# ALLOWED_HOSTS = ['*']
-
-# # Honor the 'X-Forwarded-Proto' header for request.is_secure()
-# SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-
-# # Static asset configuration
-# # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-# BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-# STATIC_ROOT = 'staticfiles'
-# STATIC_URL = '/static/'
-
-# STATIC_DIRS = (
-#     os.path.join(BASE_DIR, 'static'),
-#     )
-
-# # Database
-# # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
-
-# DATABASES = {
-#     'default': {
-#     }
-# }
-
-# DATABASES['default'] = dj_database_url.config()
+try:
+    from settings_local import *
+except ImportError:
+    try:
+        from settings_remote import *
+    except ImportError:
+        pass
 
 
-# # Default Set of DEBUG is False
-# DEBUG = False
+# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# Root Project Directory
+PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 
 
-
-
-"""
-This Below are the setting information for the DEVELOPMENT environment
-CAM2API
-"""
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '7t@@r3(twocu_9j+hawhl+m3#1$n9thgs7=jb%m!=w-ig!315*'
+# Default Set of DEBUG is False
+DEBUG = False
 
 # Allow all host headers
 ALLOWED_HOSTS = ['*']
 
-# Honor the 'X-Forwarded-Proto' header for request.is_secure()
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+# Application definition
 
-# Static asset configuration
-STATIC_ROOT = os.path.join(PROJECT_ROOT, 'staticfiles')
-STATIC_URL = '/static/'
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'django.contrib.gis',
+    'rest_framework',
+    'CAM2API',
+]
 
-# Using white noise to collect static files on production
-STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage' 
+MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
 
-# # More Static File Collection
-# STATICFILES_DIRS = (
-#     os.path.join(PROJECT_ROOT, 'static'),
-#     )
+ROOT_URLCONF = 'API.urls'
 
-# https://docs.djangoproject.com/en/1.10/ref/settings/#databases
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    },
+]
 
-# Heroku Database
-DATABASES = {
-    'default': {
-    }
-}
-
-DATABASES['default'] = dj_database_url.config()
-DATABASES['default']['ENGINE'] = 'django.contrib.gis.db.backends.postgis'
-
-
-# # Local Database
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.contrib.gis.db.backends.postgis',
-#         # 'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#         'NAME': 'cam2api',
-#         'USER': 'cam2api',
-#         'PASSWORD': 'no1234',
-#         'HOST': 'localhost',
-#         'PORT': '',
-#     }
-# }
+WSGI_APPLICATION = 'API.wsgi.application'
 
 
+# Password validation
+# https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators
 
-# Default Set of DEBUG is False
-DEBUG = True
+AUTH_PASSWORD_VALIDATORS = [
+    {
+        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+    },
+]
+
+
+# Internationalization
+# https://docs.djangoproject.com/en/1.10/topics/i18n/
+
+LANGUAGE_CODE = 'en-us'
+
+TIME_ZONE = 'UTC'
+
+USE_I18N = True
+
+USE_L10N = True
+
+USE_TZ = True
+
