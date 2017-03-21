@@ -4,6 +4,7 @@ Specific settings are imported other setting libraries for better
 control. 
 """
 import dj_database_url
+import os
 
 """
 This Below are the setting information for the DEVELOPMENT environment
