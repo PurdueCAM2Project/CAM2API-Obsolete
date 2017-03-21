@@ -8,12 +8,15 @@ class CameraSerializer(serializers.Serializer):
 	city = serializers.CharField()
 	state = serializers.CharField()
 	country = serializers.CharField()
+	# lat_lng NO SERIALIZER
 	# Source Information:
 	source = serializers.CharField()
 	source_url = serializers.CharField() # URL of source (Not for image data!)
 	# Time Information:
 	date_added = serializers.DateTimeField()
 	last_updated = serializers.DateTimeField() # Last known time a snapshot was downloaded
+	# Camera Types (Non_ip or IP)
+	camera_type = serializers.CharField()
 	# More Info:
 	description = serializers.CharField() # Description of the camera
 	is_video = serializers.BooleanField() # True if camera is a video stream 
@@ -35,13 +38,13 @@ class CameraSerializer(serializers.Serializer):
 
 	def create(self, validated_data):
 		"""
-		Create and return a new `Snippet` instance, given the validated data.
+		Create and return a new 'Camera' instance, given the validated data.
 		"""
 		return Snippet.objects.create(**validated_data)
 
 	def update(self, instance, validated_data):
 		"""
-		Update and return an existing `Snippet` instance, given the validated data.
+		Update and return an existing 'Camera' instance, given the validated data.
 		"""
 		instance.camera_id = validated_data.get('camera_id', instance.camera_id) # id from old database 
 		# Geography: 
@@ -54,6 +57,8 @@ class CameraSerializer(serializers.Serializer):
 		# Time Information:
 		instance.date_added = validated_data.get('date_added', instance.date_added)
 		instance.last_updated = validated_data.get('last_updated', instance.last_updated) # Last known time a snapshot was downloaded
+		# Camera Types (Non_ip or IP)
+		instance.camera_type = validated_data.get('camera_type', instance.camera_type) 
 		# More Info:
 		instance.description = validated_data.get('description', instance.description) # Description of the camera
 		instance.is_video = validated_data.get('is_video', instance.is_video) # True if camera is a video stream 
