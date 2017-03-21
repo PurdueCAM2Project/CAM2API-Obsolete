@@ -8,11 +8,9 @@ import os
 # Import settings specific to deployment
 try:
     from settings_local import *
-    print("IMPORTED LOCAL")
 except ImportError:
     try:
         from settings_remote import *
-        print("IMPORTED REMOTE")
     except ImportError:
         pass
 
