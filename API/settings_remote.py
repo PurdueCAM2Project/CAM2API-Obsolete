@@ -5,6 +5,7 @@ control.
 """
 import dj_database_url
 import os
+import environ
 
 """
 This Below are the setting information for the DEVELOPMENT environment
@@ -34,8 +35,12 @@ STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 #     os.path.join(PROJECT_ROOT, 'static'),
 #     )
 
-# https://docs.djangoproject.com/en/1.10/ref/settings/#databases
+# Get geoDjango GEOS and GDAL library paths from Heroku environment variables
+GEOS_LIBRARY_PATH = environ.get('GEOS_LIBRARY_PATH')
+GDAL_LIBRARY_PATH = environ.get('GDAL_LIBRARY_PATH')
 
+
+# https://docs.djangoproject.com/en/1.10/ref/settings/#databases
 # Heroku Database
 DATABASES = {
     'default': dj_database_url.config(default=os.environ['DATABASE_URL'])
