@@ -10,6 +10,9 @@ import os
 This Below are the setting information for the DEVELOPMENT environment
 CAM2API
 """
+# Root Project Directory
+PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
+
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '7t@@r3(twocu_9j+hawhl+m3#1$n9thgs7=jb%m!=w-ig!315*'
 
