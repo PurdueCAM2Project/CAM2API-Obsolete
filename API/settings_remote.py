@@ -14,6 +14,7 @@ CAM2API
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 
 # SECURITY WARNING: keep the secret key used in production secret!
+# To add secret key variable to Heroku Deployment use "heroku config:add DJANGO_SECRET_KEY=<your secret key>" 
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 
 # Allow all host headers
