@@ -5,13 +5,14 @@ from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
 
 from rest_framework import status
+from rest_framework.decorators import api_view
 
 # Import Models
 from CAM2API.models import Camera
 from CAM2API.serializers import CameraSerializer
 
 
-@csrf_exempt
+@api_view(['GET', 'POST'])
 def camera_list(request):
 	if request.method == 'GET':
 		cameras = Camera.objects.all()
@@ -28,7 +29,7 @@ def camera_list(request):
 
 
 
-@csrf_exempt
+@api_view(['GET', 'POST'])
 def camera_detail(request, pk):
 	"""
 	Retrieve, update or delete a code camera.
