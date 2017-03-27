@@ -1,53 +1,51 @@
-from rest_framework import status
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-
-# Import Models:
+from django.shortcuts import render
+from django.http import HttpResponse, JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from rest_framework.renderers import JSONRenderer
+from rest_framework.parsers import JSONParser
 from CAM2API.models import Camera
 from CAM2API.serializers import CameraSerializer
 
 
-@api_view(['GET', 'POST'])
+@csrf_exempt
 def camera_list(request):
-	"""
-    List all cameras, or create a new camera.
-    """
 	if request.method == 'GET':
 		cameras = Camera.objects.all()
 		serializer = CameraSerializer(cameras, many=True)
-		return Response(serializer.data, safe=False)
+		return JsonResponse(serializer.data, safe=False)
 
 	elif request.method == 'POST':
-		serializer = CameraSerializer(data=request.data)
+		data = JSONParser().parse(request)
+		serializer = CameraSerializer(data=data)
 		if serializer.is_valid():
 			serializer.save()
-			return Response(serializer.data, status=status.HTTP_201_CREATED)
-		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+			return JsonResponse(serializer.data, status=201)
+		return JsonResponse(serializer.errors, status=400)
 
 
 
-@api_view(['GET', 'PUT', 'DELETE'])
+@csrf_exempt
 def camera_detail(request, pk):
 	"""
-	Retrieve, update or delete a camera object.
+	Retrieve, update or delete a code camera.
 	"""
 	try:
 		camera = Camera.objects.get(camera_id=pk)
 	except Camera.DoesNotExist:
-		return HttpResponse(status=status.HTTP_404_NOT_FOUND)
+		return HttpResponse(status=404)
 
 	if request.method == 'GET':
 		serializer = CameraSerializer(camera)
-		return Response(serializer.data)
+		return JsonResponse(serializer.data)
 
 	elif request.method == 'PUT':
 		data = JSONParser().parse(request)
 		serializer = CameraSerializer(camera, data=data)
 		if serializer.is_valid():
 			serializer.save()
-			return Response(serializer.data)
-		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+			return JsonResponse(serializer.data)
+		return JsonResponse(serializer.errors, status=400)
 
 	elif request.method == 'DELETE':
 		camera.delete()
-		return Response(status=status.HTTP_204_NO_CONTENT)
+		return HttpResponse(status=204)
