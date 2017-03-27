@@ -14,6 +14,8 @@ class Camera(models.Model):
 	city = models.CharField(max_length=30, null=False)
 	state = models.CharField(max_length=12, null=True)
 	country = models.CharField(max_length=50, null=False)
+	# float_lat = models.FloatField(max_length=100, null=True)
+	# float_lng = models.FloatField(max_length=100, null=True)
 	lat_lng = models.GeometryField(geography=True, default=0) # Sets geometry field points to geography in postgis
 	# Source Information:
 	source = models.CharField(max_length=30, null=False)
