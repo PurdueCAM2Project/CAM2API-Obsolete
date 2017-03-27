@@ -30,7 +30,7 @@ def camera_detail(request, pk):
 	Retrieve, update or delete a code camera.
 	"""
 	try:
-		camera = Camera.objects.get(pk=pk)
+		camera = Camera.objects.get(camera_id=pk)
 	except Camera.DoesNotExist:
 		return HttpResponse(status=404)
 
