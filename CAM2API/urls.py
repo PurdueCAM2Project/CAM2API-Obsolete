@@ -7,4 +7,5 @@ urlpatterns = [
     url(r'^cameras/(?P<pk>[0-9]+)/$', views.camera_detail),
 ]
 
+# Adds format patterns to the API
 urlpatterns = format_suffix_patterns(urlpatterns)

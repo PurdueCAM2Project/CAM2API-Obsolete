@@ -1,69 +1,103 @@
-from django.shortcuts import render
-from django.http import HttpResponse, JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-from rest_framework.renderers import JSONRenderer
-from rest_framework.parsers import JSONParser
-
-from rest_framework import status
-from rest_framework.decorators import api_view
-
-# Import Models
+# Import Models and Serializer
 from CAM2API.models import Camera
 from CAM2API.serializers import CameraSerializer
 
+from django.http import Http404
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
 
-@api_view(['GET', 'POST'])
-def camera_list(request, format=None):
+class camera_list(APIView):
 	"""
-	Returns a list of all the cameras in the database for a HTTP GET request
-	input request: the HTTP GET or POST request for the camera data
-	return 	GET - JSON response containing all the camera data in the database
-			POST - Creates new camera objects in the database
+	Returns:
+		GET - JSON response containing all the camera data in the database
+		POST - Creates new camera objects in the database
 	"""
-	if request.method == 'GET':
+	def get(self, request, format=None):
+		"""
+		Returns JSON response containing all the camera data in the database
+		input request: HTTP GET request
+		input format: optional format string included in HTTP request
+		return: JSON String
+		"""
 		cameras = Camera.objects.all()
 		serializer = CameraSerializer(cameras, many=True)
-		return JsonResponse(serializer.data, safe=False)
+		return Response(serializer.data)
 
-	elif request.method == 'POST':
-		data = JSONParser().parse(request)
-		serializer = CameraSerializer(data=data)
+
+	def post(self, request, format=None):
+		"""
+		Creates new camera objects in the database and returns a HTTP 201 if success
+		input request: HTTP POST request
+		input format: optional format string included in HTTP request
+		return: HTTP 201 if the data successfully saved in the database or HTTP 400 if
+				there was an error saving the camera information to the database
+		"""
+		serializer = CameraSerializer(data=request.data)
 		if serializer.is_valid():
 			serializer.save()
-			return JsonResponse(serializer.data, status=status.HTTP_201_CREATED)
-		return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+			return(Response(serializer.data, status=status.HTTP_201_CREATED))
+		return(Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST))
 
 
-
-@api_view(['GET', 'POST'])
-def camera_detail(request, pk, format=None):
+class CameraDetail(APIView):
 	"""
-	Retrieve, update or delete a specific camera in the database.
-	input request: the HTTP GET or POST request sent to the API
-	input pk: primary key of the camera in question. This will be set to the original
-			database camera id for continuity.
-	return: GET - JSON response containing the relevant camera data or a HTTP 204/400 error 
-			if there is no camera that matches the pk
-			PUT - adds a camera object to the database
-			DELETE - removes the camera from the database.
+	Retrieve, update or delete a specific camera in the database biased on camera ID 
+		from the original database
 	"""
-	try:
-		camera = Camera.objects.get(camera_id=pk)
-	except Camera.DoesNotExist:
-		return HttpResponse(status=status.HTTP_404_NOT_FOUND)
+	def get_object(self, pk):
+		"""
+		Quarries that database for a camera object matching the pk given. 
+		This will search for cameras biased on the id given to them in the old database
+		returns: Camera object 
+		"""
+		try:
+			return Camera.objects.get(camera_id=pk)
+		except Camera.DoesNotExist:
+			raise Http404
 
-	if request.method == 'GET':
+
+	def get(self, request, pk, format=None):
+		"""
+		Handles HTTP GET requests to a specific camera in the database
+		input request: the HTTP GET request sent to the API
+		input pk: primary key of the camera in question.
+		input format: optional format string included in HTTP request
+		return: JSON/API response containing the relevant camera data or a HTTP 404 error
+				if there is no camera that matches the pk 
+		"""
+		camera = self.get_object(pk)
 		serializer = CameraSerializer(camera)
-		return JsonResponse(serializer.data)
+		return(Response(serializer.data))
 
-	elif request.method == 'PUT':
-		data = JSONParser().parse(request)
-		serializer = CameraSerializer(camera, data=data)
+
+	def put(self, request, pk, format=None):
+		"""
+		Handles HTTP PUT requests to a specific camera in the database and modifies the 
+			given camera object in the database
+		input request: the HTTP PUT request sent to the API
+		input pk: primary key of the camera in question.
+		input format: optional format string included in HTTP request
+		return: Response containing the relevant camera data if the request is successful 
+				or a HTTP 400 error if the camera cannot be edited to the database
+		"""
+		camera - self.get_object(pk):
+		serializer = CameraSerializer(camera, data=request.data)
 		if serializer.is_valid():
 			serializer.save()
-			return JsonResponse(serializer.data)
-		return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+			return(Response(serializer.data))
+		return(Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST))
 
-	elif request.method == 'DELETE':
+
+	def delete(self, request, pk, format=None):
+		"""
+		Handles HTTP DELETE requests to a specific camera in the database
+		input request: the HTTP DELETE request sent to the API
+		input pk: primary key of the camera in question.
+		input format: optional format string included in HTTP request
+		return: Response containing the relevant camera data if the request is successful 
+				or a HTTP 204 error if the camera is deleted from the database
+		"""
+		camera = self.get_object(pk)
 		camera.delete()
-		return HttpResponse(status=status.HTTP_204_NO_CONTENT)
+		return(Response(status=status.HTTP_204_NO_CONTENT))
