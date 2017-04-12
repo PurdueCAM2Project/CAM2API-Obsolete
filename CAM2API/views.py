@@ -13,7 +13,13 @@ from CAM2API.serializers import CameraSerializer
 
 
 @api_view(['GET', 'POST'])
-def camera_list(request):
+def camera_list(request, format=None):
+	"""
+	Returns a list of all the cameras in the database for a HTTP GET request
+	input request: the HTTP GET or POST request for the camera data
+	return 	GET - JSON response containing all the camera data in the database
+			POST - Creates new camera objects in the database
+	"""
 	if request.method == 'GET':
 		cameras = Camera.objects.all()
 		serializer = CameraSerializer(cameras, many=True)
@@ -30,9 +36,16 @@ def camera_list(request):
 
 
 @api_view(['GET', 'POST'])
-def camera_detail(request, pk):
+def camera_detail(request, pk, format=None):
 	"""
-	Retrieve, update or delete a code camera.
+	Retrieve, update or delete a specific camera in the database.
+	input request: the HTTP GET or POST request sent to the API
+	input pk: primary key of the camera in question. This will be set to the original
+			database camera id for continuity.
+	return: GET - JSON response containing the relevant camera data or a HTTP 204/400 error 
+			if there is no camera that matches the pk
+			PUT - adds a camera object to the database
+			DELETE - removes the camera from the database.
 	"""
 	try:
 		camera = Camera.objects.get(camera_id=pk)
