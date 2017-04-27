@@ -3,11 +3,11 @@ from CAM2API.models import Camera
 from CAM2API.serializers import CameraSerializer
 
 from django.http import Http404
-from rest_framework.views import APIView
+from rest_framework.views import GenericAPIView
 from rest_framework.response import Response
 from rest_framework import status
 
-class CameraList(APIView):
+class CameraList(GenericAPIView):
 	"""
 	Returns:
 		GET - JSON response containing all the camera data in the database
@@ -40,7 +40,7 @@ class CameraList(APIView):
 		return(Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST))
 
 
-class CameraDetail(APIView):
+class CameraDetail(GenericAPIView):
 	"""
 	Retrieve, update or delete a specific camera in the database biased on camera ID 
 		from the original database
