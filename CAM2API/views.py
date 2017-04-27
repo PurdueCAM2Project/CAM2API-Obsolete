@@ -7,7 +7,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 
-class camera_list(APIView):
+class CameraList(APIView):
 	"""
 	Returns:
 		GET - JSON response containing all the camera data in the database
