@@ -33,7 +33,9 @@ class CameraList(APIView):
 		return: HTTP 201 if the data successfully saved in the database or HTTP 400 if
 				there was an error saving the camera information to the database
 		"""
-		print("DATA:", request.data)
+		print(request.data)
+		print()
+		print(request.data['float_lat'])
 		serializer = CameraSerializer(data=request.data)
 		if serializer.is_valid():
 			serializer.save()
