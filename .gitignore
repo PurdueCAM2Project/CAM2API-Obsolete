@@ -1,0 +1,6 @@
+API/settings_local.py
+API/settings_local.pyc
+*.sublime-project
+*.sublime.workspace
+*.pyc
+venv
