@@ -81,7 +81,7 @@ class CameraDetail(APIView):
 		return: Response containing the relevant camera data if the request is successful 
 				or a HTTP 400 error if the camera cannot be edited to the database
 		"""
-		camera - self.get_object(pk):
+		camera = self.get_object(pk):
 		serializer = CameraSerializer(camera, data=request.data)
 		if serializer.is_valid():
 			serializer.save()
