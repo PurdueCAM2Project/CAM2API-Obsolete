@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.gis',
     'rest_framework',
+    'rest_framework.authtoken',
     'CAM2API',
 ]
 
@@ -89,7 +90,16 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# Ensures all API requests are directed through HTTPS
 SECURE_SSL_REDIRECT = True
+
+# REST_framework libraries
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    )
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.10/topics/i18n/
