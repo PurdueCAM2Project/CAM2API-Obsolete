@@ -36,6 +36,7 @@ class Camera(models.Model):
 	inactive = models.NullBooleanField() # True if data cannot be accessed from the camera Null if unknown.
 	resolution_w = models.PositiveIntegerField(null=True) # Resolution width determined automatically 
 	resolution_h = models.PositiveIntegerField(null=True) # Resolution height determined automatically 
+	# created_by = # Token for user who added the camera to the database
 
 	# Image Retrieval objects:
 	# For more information see https://docs.djangoproject.com/en/1.10/ref/contrib/contenttypes/#generic-relations
