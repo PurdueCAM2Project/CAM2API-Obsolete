@@ -90,9 +90,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-# Ensures all API requests are directed through HTTPS
-SECURE_SSL_REDIRECT = True
-
 # REST_framework libraries
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
