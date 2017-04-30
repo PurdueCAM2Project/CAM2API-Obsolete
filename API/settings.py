@@ -7,10 +7,10 @@ import os
 
 # Import settings specific to deployment
 try:
-    from settings_local import *
+    from .settings_local import *
 except ImportError:
     try:
-        from settings_remote import *
+        from .settings_remote import *
     except ImportError:
         pass
 
