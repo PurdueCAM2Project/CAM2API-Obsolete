@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 # from django.db import models
 from django.contrib.gis.db import models # contrib.gis.db ensures the PostGis models are included
 
-from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
 
 
@@ -14,8 +14,8 @@ class Camera(models.Model):
 	city = models.CharField(max_length=30, null=False)
 	state = models.CharField(max_length=12, null=True)
 	country = models.CharField(max_length=50, null=False)
-	float_lat = models.FloatField(max_length=100, null=True)
-	float_lng = models.FloatField(max_length=100, null=True)
+	lat = models.FloatField(max_length=100, null=True)
+	lng = models.FloatField(max_length=100, null=True)
 	lat_lng = models.GeometryField(geography=True, default=0) # Sets geometry field points to geography in postgis
 	
 	# Source Information:
@@ -51,6 +51,7 @@ class Camera(models.Model):
 
 class Non_IP(models.Model):
 	url = models.CharField(max_length=100, null=False) # URL to the image data 
+	camera = GenericRelation(Camera)
 
 class IP(models.Model):
 	ip = models.CharField(max_length=44, null=False)
@@ -60,3 +61,4 @@ class IP(models.Model):
 	video_path = models.CharField(max_length=100, null=False)
 	image_path = models.CharField(max_length=100, null=False)
 	rtsp_path = models.CharField(max_length=100, null=False)
+	camera = GenericRelation(Camera)

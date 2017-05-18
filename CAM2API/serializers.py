@@ -12,7 +12,7 @@ from CAM2API.models import Camera
 class CameraSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Camera
-		fields = ('camera_id','city','state','country','float_lat', 'float_lng','lat_lng','source','source_url',\
+		fields = ('camera_id','city','state','country','lat', 'lng','lat_lng','source','source_url',\
 			'date_added','last_updated','camera_type','description','is_video','framerate',\
 			'outdoors','indoors','traffic','inactive','resolution_w','resolution_h', 'content_type', 'object_id', 'retrieval_model')
 		# Need to searialize 'retrieval_model'

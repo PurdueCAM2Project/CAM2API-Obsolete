@@ -37,9 +37,9 @@ class CameraList(APIView):
 		"""
 		try:
 			# Create the Geospacial Object:
-			lat_lng = '{{ "type": "Point", "coordinates": [ {}, {} ] }}'.format(request.data['float_lat'], request.data['float_lng'])
+			lat_lng = '{{ "type": "Point", "coordinates": [ {}, {} ] }}'.format(request.data['lat'], request.data['lng'])
 			lat_lng = GEOSGeometry(lat_lng)
-			
+
 			data = request.data
 			data.update({"lat_lng":lat_lng})
 			serializer = CameraSerializer(data=data)
