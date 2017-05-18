@@ -35,6 +35,9 @@ STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 #     os.path.join(PROJECT_ROOT, 'static'),
 #     )
 
+# Ensures all API requests are directed through HTTPS
+# SECURE_SSL_REDIRECT = True
+
 # Get geoDjango GEOS and GDAL library paths from Heroku environment variables
 GEOS_LIBRARY_PATH = os.environ.get('GEOS_LIBRARY_PATH')
 GDAL_LIBRARY_PATH = os.environ.get('GDAL_LIBRARY_PATH')
