@@ -2,6 +2,8 @@
 from CAM2API.models import Camera
 from CAM2API.serializers import CameraSerializer
 
+from django.contrib.gis.geos import GEOSGeometry
+
 from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -33,10 +35,20 @@ class CameraList(APIView):
 		return: HTTP 201 if the data successfully saved in the database or HTTP 400 if
 				there was an error saving the camera information to the database
 		"""
-		print(request.data)
-		print()
-		print(request.data['float_lat'])
-		serializer = CameraSerializer(data=request.data)
+		try:
+			# Create the Geospacial Object:
+			lat_lng = '{{ "type": "Point", "coordinates": [ {}, {} ] }}'.format(request.data['float_lat'], request.data['float_lng'])
+			lat_lng = GEOSGeometry(lat_lng)
+			
+			data = request.data
+			data.update({"lat_lng":lat_lng})
+			serializer = CameraSerializer(data=data)
+			print(serializer)
+
+		except:
+			return(Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST))
+			
+			
 		if serializer.is_valid():
 			serializer.save()
 			return(Response(serializer.data, status=status.HTTP_201_CREATED))
