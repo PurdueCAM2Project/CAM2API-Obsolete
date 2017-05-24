@@ -50,7 +50,6 @@ class CameraList(APIView):
 		# 	else:
 		# 		print("THere")
 		# 		serializer = IPCameraSerializer(data=data)
-		# 	#data.update({"lat_lng":lat_lng})
 		# 	#serializer = CameraSerializer(data=data)
 
 		# except:
@@ -63,33 +62,30 @@ class CameraList(APIView):
 		# #print(type(data))
 		# #print(type(serializer.data))
 		# return(Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST))
+
+
+		lat_lng = '{{ "type": "Point", "coordinates": [ {}, {} ] }}'.format(request.data['lat'], request.data['lng'])
+		lat_lng = GEOSGeometry(lat_lng)
+		
 		data = request.data
-		#print(data)
-
-
+		
+		data.update({"lat_lng":lat_lng})
+	
 		if 'url' in data.keys():
-			serializer = NonIPCameraSerializer(data=data)
+			non_ip_serializer = NonIPSerializer(data=data)
+			if non_ip_serializer.is_valid():
+				data['retrieval_model'] = non_ip_serializer.data
+				serializer = NonIPCameraSerializer(data=data)
 		else:
-			# ip, port = data['ip'], data['port']
 			ip_serializer = IPSerializer(data=data)
-			# obj_keys = [x for x in data.keys() if x in ('ip', 'port',)]
-			# obj_values = [data[x] for x in data.keys() if x in ('ip', 'port',)]
-			# obj_data = dict(zip(obj_keys,obj_values))
-			#print(obj_data)
-			#ip_serializer = IPSerializer(data=obj_data)
 			if ip_serializer.is_valid():
-				#ip_serializer.save()
-				# data.pop('ip', None)
-				# data.pop('port', None)
 				data['retrieval_model'] = ip_serializer.data
-				# print(ip_serializer.data)
 				serializer = IPCameraSerializer(data=data)
-			if serializer.is_valid():
-				#print(serializer.validated_data)
-				serializer.save()
-				return Response(serializer.data)
-			else:	
-				return Response(serializer.errors)
+		if serializer.is_valid():
+			serializer.save()
+			return Response(serializer.data)
+		else:	
+			return Response(serializer.errors)
 
 	
 
