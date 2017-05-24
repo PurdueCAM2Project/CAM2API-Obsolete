@@ -1,21 +1,111 @@
 from rest_framework import serializers
-from CAM2API.models import Camera
+from CAM2API.models import Camera, IP, Non_IP
 
-# class CameraSerializer(serializers.ModelSerializer):
+# class CameraSerializer(serializers.ModelSerializer): 
 # 	class Meta:
 # 		model = Camera
-# 		fields = ('camera_id','city','state','country','lat_lng','source','source_url',\
-# 			'date_added','last_updated','camera_type','description','is_video','framerate',\
-# 			'outdoors','indoors','traffic','inactive','resolution_w','resolution_h')
-# 		# Need to searialize 'retrieval_model'
+# 		fields = ('pk','camera_id','city','state','country','lat','lng','lat_lng','source','source_url',
+# 			'date_added','last_updated','camera_type','description','is_video','framerate',
+# 			'outdoors','indoors','traffic','inactive','resolution_w','resolution_h',)
 
-class CameraSerializer(serializers.ModelSerializer):
+		# Need to searialize 'retrieval_model'
+
+class CameraRelatedField(serializers.RelatedField):
+	def to_reprensentation(self, value):
+ 		if isinstance(value, Non_IP):
+ 			return 'Non_IP_URL: ' + value.url
+ 		elif isinstance(value, IP):
+ 			return 'IP_address: ' + value.ip
+'''
+class IPSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = IP
+		fields = ('ip')
+
+class NonIPSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = Non_IP
+		fields = ('url')
+
+class IPCameraSerializer(serializers.ModelSerializer):
+	camera = IPSerializer(read_only=True)
 	class Meta:
 		model = Camera
-		fields = ('camera_id','city','state','country','lat', 'lng','lat_lng','source','source_url',\
-			'date_added','last_updated','camera_type','description','is_video','framerate',\
-			'outdoors','indoors','traffic','inactive','resolution_w','resolution_h', 'content_type', 'object_id', 'retrieval_model')
-		# Need to searialize 'retrieval_model'
+		fields = ('pk', 'camera_id', 'city' ,'state', 'country', 'camera',)
+
+class NonIPCameraSerializer(serializers.ModelSerializer):
+	camera = NonIPSerializer(read_only=True)
+	class Meta:
+		model = Camera
+		fields = ('pk', 'camera_id', 'city' ,'state', 'country', 'camera',)
+'''
+# class StringFieldNestedMixin(serializers.StringRelatedField, serializers.ModelSerializer):
+# 	def _to_internal_value(self,data):
+# 		return serializers.StringRelatedField._to_internal_value(self,data)
+# 	def _to_representation(self,data):
+# 		return serializers.ModelSerializer._to_representation(self,data)
+
+
+class IPSerializer(serializers.ModelSerializer):
+	
+	#ip = serializers.CharField()
+	#port = serializers.IntegerField()
+
+	class Meta:
+		model = IP
+		fields = ('ip','port')
+
+	def create(self, validated_data):
+		return IP.objects.create(**validated_data)
+
+class NonIPSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = Non_IP
+		fields = ('url',)
+
+class IPCameraSerializer(serializers.ModelSerializer):
+	retrieval_model = IPSerializer()
+
+	class Meta:
+		model = Camera
+		fields = ('pk', 'camera_id', 'city' ,'state', 'country', 'retrieval_model')
+		#depth = 2
+
+	def create(self, validated_data):
+		retrieval_data = validated_data.pop('retrieval_model')
+		retrieval_model = IP.objects.create(**retrieval_data)
+		camera = Camera.objects.create(retrieval_model=retrieval_model, **validated_data)
+		return camera
+
+
+class NonIPCameraSerializer(serializers.ModelSerializer):
+	
+	non_ip = NonIPSerializer()
+
+
+	class Meta:
+		model = Camera
+		fields = ('pk', 'camera_id', 'city' ,'state', 'country', 'non_ip')
+
+	def create(self, validated_data):
+		non_ip_data = validated_data.pop('non_ip')
+		non_ip = Non_IP.objects.create(**non_ip_data)
+		camera = Camrea.objects.create(non_ip=non_ip, **validated_data)
+		return camera
+
+
+
+
+
+
+# class CameraSerializer(serializers.ModelSerializer):
+# 	
+	    #class Meta:
+# 		model = Camera
+# 		fields = ('camera_id','city','state','country','lat', 'lng','lat_lng','source','source_url',\
+# 			'date_added','last_updated','camera_type','description','is_video','framerate',\
+# 			'outdoors','indoors','traffic','inactive','resolution_w','resolution_h', 'content_type', 'object_id', 'retrieval_model')
+# 		# Need to searialize 'retrieval_model'
 
 
 # class CameraSerializer(serializers.Serializer):

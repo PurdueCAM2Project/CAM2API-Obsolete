@@ -1,13 +1,16 @@
 # Import Models and Serializer
-from CAM2API.models import Camera
-from CAM2API.serializers import CameraSerializer
+from CAM2API.models import Camera, Non_IP, IP
+from CAM2API.serializers import (NonIPCameraSerializer, IPCameraSerializer, IPSerializer, NonIPSerializer)
 
 from django.contrib.gis.geos import GEOSGeometry
 
 from django.http import Http404
 from rest_framework.views import APIView
+from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from rest_framework import status
+from django.db.models.query import QuerySet
+from django.shortcuts import get_object_or_404
 
 class CameraList(APIView):
 	"""
@@ -23,10 +26,10 @@ class CameraList(APIView):
 		return: JSON String
 		"""
 		cameras = Camera.objects.all()
-		serializer = CameraSerializer(cameras, many=True)
+		serializer = IPCameraSerializer(cameras, many=True)
 		return Response(serializer.data)
 
-
+	
 	def post(self, request, format=None):
 		"""
 		Creates new camera objects in the database and returns a HTTP 201 if success
@@ -35,24 +38,60 @@ class CameraList(APIView):
 		return: HTTP 201 if the data successfully saved in the database or HTTP 400 if
 				there was an error saving the camera information to the database
 		"""
-		try:
-			# Create the Geospacial Object:
-			lat_lng = '{{ "type": "Point", "coordinates": [ {}, {} ] }}'.format(request.data['lat'], request.data['lng'])
-			lat_lng = GEOSGeometry(lat_lng)
 
-			data = request.data
-			data.update({"lat_lng":lat_lng})
-			serializer = CameraSerializer(data=data)
-			print(serializer)
+		# try:
+		# 	# Create the Geospacial Object:
+		# 	lat_lng = '{{ "type": "Point", "coordinates": [ {}, {} ] }}'.format(request.data['lat'], request.data['lng'])
+		# 	lat_lng = GEOSGeometry(lat_lng)
+		# 	data = request.data
+		# 	if 'url' in data.keys():
+		# 		print("Here")
+		# 		serializer = NonIPCameraSerializer(data=data)
+		# 	else:
+		# 		print("THere")
+		# 		serializer = IPCameraSerializer(data=data)
+		# 	#data.update({"lat_lng":lat_lng})
+		# 	#serializer = CameraSerializer(data=data)
 
-		except:
-			return(Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST))
+		# except:
+		# 	#return(Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST))
+		# 	raise Http404
 			
-			
-		if serializer.is_valid():
-			serializer.save()
-			return(Response(serializer.data, status=status.HTTP_201_CREATED))
-		return(Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST))
+		# if serializer.is_valid():
+		# 	serializer.save()
+		# 	return(Response(serializer.data, status=status.HTTP_201_CREATED))
+		# #print(type(data))
+		# #print(type(serializer.data))
+		# return(Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST))
+		data = request.data
+		#print(data)
+
+
+		if 'url' in data.keys():
+			serializer = NonIPCameraSerializer(data=data)
+		else:
+			# ip, port = data['ip'], data['port']
+			ip_serializer = IPSerializer(data=data)
+			# obj_keys = [x for x in data.keys() if x in ('ip', 'port',)]
+			# obj_values = [data[x] for x in data.keys() if x in ('ip', 'port',)]
+			# obj_data = dict(zip(obj_keys,obj_values))
+			#print(obj_data)
+			#ip_serializer = IPSerializer(data=obj_data)
+			if ip_serializer.is_valid():
+				#ip_serializer.save()
+				# data.pop('ip', None)
+				# data.pop('port', None)
+				data['retrieval_model'] = ip_serializer.data
+				# print(ip_serializer.data)
+				serializer = IPCameraSerializer(data=data)
+			if serializer.is_valid():
+				#print(serializer.validated_data)
+				serializer.save()
+				return Response(serializer.data)
+			else:	
+				return Response(serializer.errors)
+
+	
 
 
 class CameraDetail(APIView):
@@ -60,19 +99,30 @@ class CameraDetail(APIView):
 	Retrieve, update or delete a specific camera in the database biased on camera ID 
 		from the original database
 	"""
-	def get_object(self, pk):
-		"""
-		Quarries that database for a camera object matching the pk given. 
-		This will search for cameras biased on the id given to them in the old database
-		returns: Camera object 
-		"""
-		try:
-			return Camera.objects.get(camera_id=pk)
-		except Camera.DoesNotExist:
-			raise Http404
 
+	lookup_field = ['camera_id']
+	lookup_url_kwargs = ['cd']
 
-	def get(self, request, pk, format=None):
+	# def get_object(self):
+	# 	"""
+	# 	Quarries that database for a camera object matching the pk given. 
+	# 	This will search for cameras biased on the id given to them in the old database
+	# 	returns: Camera object 
+	# 	"""
+	# 	try:
+	# 		return Camera.objects.get(camera_id=pk)
+	# 	except Camera.DoesNotExist:
+	# 		raise Http404
+
+	def get_object(self):
+		lookup_url_kwargs = self.lookup_url_kwargs
+		lookup_url_kwargs_value = [self.kwargs[item] for item in lookup_url_kwargs]
+		filter_kwargs = dict(zip(self.lookup_field, lookup_url_kwargs_value))
+		instance = get_object_or_404(Camera, **filter_kwargs) #the same as instance = get_object_or_404(Camera, camera_id=cd)
+		print(filter_kwargs)
+		return instance
+
+	def get(self, request, cd, format=None):
 		"""
 		Handles HTTP GET requests to a specific camera in the database
 		input request: the HTTP GET request sent to the API
@@ -81,12 +131,12 @@ class CameraDetail(APIView):
 		return: JSON/API response containing the relevant camera data or a HTTP 404 error
 				if there is no camera that matches the pk 
 		"""
-		camera = self.get_object(pk)
+		camera = self.get_object()
 		serializer = CameraSerializer(camera)
 		return(Response(serializer.data))
 
 
-	def put(self, request, pk, format=None):
+	def put(self, request, cd, pk, format=None):
 		"""
 		Handles HTTP PUT requests to a specific camera in the database and modifies the 
 			given camera object in the database
@@ -96,15 +146,24 @@ class CameraDetail(APIView):
 		return: Response containing the relevant camera data if the request is successful 
 				or a HTTP 400 error if the camera cannot be edited to the database
 		"""
-		camera = self.get_object(pk)
+		camera = self.get_object()
+		try:
+			lat_lng_point = '{{"type": "Point", "coordinates": [{}, {}]}}' .format(request.data['lat'], request.data['lng'])
+			lat_lng = GEOSGeometry(lat_lng_point)
+			data = request.data
+			data['lat_lng'] = lat_lng
+		except:
+			raise Http404
+
 		serializer = CameraSerializer(camera, data=request.data)
 		if serializer.is_valid():
 			serializer.save()
+			print(dir(serializer))
 			return(Response(serializer.data))
 		return(Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST))
 
 
-	def delete(self, request, pk, format=None):
+	def delete(self, request, cd, pk, format=None):
 		"""
 		Handles HTTP DELETE requests to a specific camera in the database
 		input request: the HTTP DELETE request sent to the API
@@ -113,6 +172,14 @@ class CameraDetail(APIView):
 		return: Response containing the relevant camera data if the request is successful 
 				or a HTTP 204 error if the camera is deleted from the database
 		"""
-		camera = self.get_object(pk)
+		camera = self.get_object()
+		print(dir(camera))
 		camera.delete()
 		return(Response(status=status.HTTP_204_NO_CONTENT))
+
+
+# class CameraRetrieveMixin(obejct):
+# 	def retrieve(self, request, *args, **kwargs):
+# 		instance = self.get_object()
+# 		serializer = self.get_serializer(instance)
+# 		return Response(serializer.data)
