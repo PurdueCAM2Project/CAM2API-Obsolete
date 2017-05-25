@@ -14,8 +14,8 @@ class Camera(models.Model):
 	city = models.CharField(max_length=30, null=False)
 	state = models.CharField(max_length=12, null=True)
 	country = models.CharField(max_length=50, null=False)
-	lat = models.FloatField(max_length=100, null=True)
-	lng = models.FloatField(max_length=100, null=True)
+	lat = models.FloatField(max_length=100, null=False)
+	lng = models.FloatField(max_length=100, null=False)
 	lat_lng = models.GeometryField(geography=True, default=0) # Sets geometry field points to geography in postgis
 	
 	# Source Information:
@@ -46,8 +46,8 @@ class Camera(models.Model):
 	object_id = models.PositiveIntegerField()
 	retrieval_model = GenericForeignKey('content_type', 'object_id')
 
-	def __str__(self):
-		return "camera_id: {}, camera_type: {}, image_retrieval: {}".format(camera_id, camera_type, image_retrieval)
+	# def __str__(self):
+		# return "camera_id: {}, camera_type: {}, image_retrieval: {}".format(camera_id, camera_type, image_retrieval)
 
 class Non_IP(models.Model):
 	url = models.CharField(max_length=100, null=False) # URL to the image data 
