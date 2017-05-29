@@ -1,6 +1,6 @@
 # Import Models and Serializer
 from CAM2API.models import Camera, Non_IP, IP
-from CAM2API.serializers import (NonIPCameraSerializer, IPCameraSerializer, IPSerializer, NonIPSerializer)
+from CAM2API.serializers import (CameraSerializer, IPSerializer, NonIPSerializer)
 
 from django.contrib.gis.geos import GEOSGeometry
 
@@ -64,31 +64,47 @@ class CameraList(APIView):
 		# return(Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST))
 
 
-		lat_lng = '{{ "type": "Point", "coordinates": [ {}, {} ] }}'.format(request.data['lat'], request.data['lng'])
-		lat_lng = GEOSGeometry(lat_lng)
-		
-		data = request.data
-		
-		data.update({"lat_lng":lat_lng})
-	
+		#lat_lng = '{{ "type": "Point", "coordinates": [ {}, {} ] }}'.format(request.data['lat'], request.data['lng'])
+		#lat_lng = GEOSGeometry(lat_lng)	
+		#data = self.convert_data(request.data)
+		#print(data)
+		#data.update({"lat_lng":lat_lng})
+		'''
 		if 'url' in data.keys():
 			non_ip_serializer = NonIPSerializer(data=data)
 			if non_ip_serializer.is_valid():
 				data['retrieval_model'] = non_ip_serializer.data
 				serializer = NonIPCameraSerializer(data=data)
 		else:
-			ip_serializer = IPSerializer(data=data)
-			if ip_serializer.is_valid():
-				data['retrieval_model'] = ip_serializer.data
+			#ip_serializer = IPSerializer(data=data)
+			#if ip_serializer.is_valid():
+			#	print("First")
+			#	ip_serializer.save()
+			#	data['retrieval_model'] = ip_serializer.data
+				sub_data = {}
+				sub_data["ip"] = data.get("ip", None)
+				sub_data["port"] = data.get("port", None)
+				data['retrieval_model'] = sub_data
 				serializer = IPCameraSerializer(data=data)
+		'''
+		data = self.convert_data(request.data)
+		serializer = CameraSerializer(data=data)
+
 		if serializer.is_valid():
 			serializer.save()
 			return Response(serializer.data)
 		else:	
 			return Response(serializer.errors)
 
-	
-
+	def convert_data(self,data):     #needs further modification to make it more explicit
+		if "url" in data.keys():
+			url = data.pop("url")
+			data["retrieval_model"] = {"url":url}
+		elif "port" and "ip" in data.keys():
+			port = data.pop("port")
+			ip = data.pop("ip")
+			data["retrieval_model"] = {"ip":ip, "port":port}		
+		return data 
 
 class CameraDetail(APIView):
 	"""
@@ -115,7 +131,6 @@ class CameraDetail(APIView):
 		lookup_url_kwargs_value = [self.kwargs[item] for item in lookup_url_kwargs]
 		filter_kwargs = dict(zip(self.lookup_field, lookup_url_kwargs_value))
 		instance = get_object_or_404(Camera, **filter_kwargs) #the same as instance = get_object_or_404(Camera, camera_id=cd)
-		print(filter_kwargs)
 		return instance
 
 	def get(self, request, cd, format=None):
@@ -154,7 +169,6 @@ class CameraDetail(APIView):
 		serializer = CameraSerializer(camera, data=request.data)
 		if serializer.is_valid():
 			serializer.save()
-			print(dir(serializer))
 			return(Response(serializer.data))
 		return(Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST))
 
@@ -169,7 +183,6 @@ class CameraDetail(APIView):
 				or a HTTP 204 error if the camera is deleted from the database
 		"""
 		camera = self.get_object()
-		print(dir(camera))
 		camera.delete()
 		return(Response(status=status.HTTP_204_NO_CONTENT))
 
