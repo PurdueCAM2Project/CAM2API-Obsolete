@@ -3,21 +3,7 @@ from CAM2API.models import Camera, IP, Non_IP
 from django.core.exceptions import ValidationError
 import re
 from django.contrib.gis.geos import GEOSGeometry
-# class CameraSerializer(serializers.ModelSerializer): 
-# 	class Meta:
-# 		model = Camera
-# 		fields = ('pk','camera_id','city','state','country','lat','lng','lat_lng','source','source_url',
-# 			'date_added','last_updated','camera_type','description','is_video','framerate',
-# 			'outdoors','indoors','traffic','inactive','resolution_w','resolution_h',)
 
-		# Need to searialize 'retrieval_model'
-
-# class CameraRelatedField(serializers.RelatedField):
-# 	def to_reprensentation(self, value):
-#  		if isinstance(value, Non_IP):
-#  			return 'Non_IP_URL: ' + value.url
-#  		elif isinstance(value, IP):
-#  			return 'IP_address: ' + value.ip
 
 class IPSerializer(serializers.ModelSerializer):
 
@@ -90,6 +76,7 @@ class CameraSerializer(serializers.ModelSerializer):
 		
 
 	def create(self, validated_data):   #Deserialize
+		print("Create")
 		retrieval_data = validated_data.pop('retrieval_model')
 		if 'url' in retrieval_data.keys():
 			retrieval_model = Non_IP.objects.create(**retrieval_data)  #create Non_IP object if "url" exists in request 
@@ -98,16 +85,28 @@ class CameraSerializer(serializers.ModelSerializer):
 		camera = Camera.objects.create(retrieval_model=retrieval_model, **validated_data)
 		return camera
 
+	def update(self, instance, validated_data):  #Deserialize
+		print("Update")
+		retrieval_data = validated_data.pop('retrieval_model')
+		retrieval_instance = instance.retrieval_model
+		for key, value in validated_data.items():
+			if value is not None:
+				setattr(instance,key,value)
+		setattr(instance,'lat_lng', self.get_lat_lng(validated_data))
+		for key, value in retrieval_data.items():
+			setattr(retrieval_instance, key, value)
+		retrieval_instance.save()
+		instance.save()
+		return instance
+
 	def to_internal_value(self, data):  #Deserialize
 		ret = {}
 		errors = []
 		for field in self.fields:
 			if field == "retrieval_model":
 				retrieval_model_data = data.get('retrieval_model', None)      #extract "retrieval_model" and process it later based on which base Serializer to exploit 
-			elif field == "lat_lng":
-				lat_lng = '{{ "type": "Point", "coordinates": [ {}, {} ] }}'.format(data.get('lat',None), data.get('lng',None))
-				lat_lng = GEOSGeometry(lat_lng)	
-				ret[field] = lat_lng					#create GEOSGeomoetry object 
+			elif field == "lat_lng":	
+				ret[field] = self.get_lat_lng(data)					#create GEOSGeomoetry object 
 			else:
 				
 				try:
@@ -179,27 +178,10 @@ class CameraSerializer(serializers.ModelSerializer):
 			raise serializers.ValidationError("This is not a valid resolution for height")
 		return value
 	
-
-'''
-class NonIPCameraSerializer(serializers.ModelSerializer):
-	
-	retrieval_model = NonIPSerializer()
-
-
-	class Meta:
-		model = Camera
-		fields = ('pk', 'camera_id', 'city' ,'state', 'country', 'retrieval_model','lat','lng','lat_lng','source','source_url',
-			'date_added','last_updated','camera_type','description','is_video','framerate',
-			'outdoors','indoors','traffic','inactive','resolution_w','resolution_h')
-
-	def create(self, validated_data):
-		retrieval_data = validated_data.pop('retrieval_model')
-		retrieval_model = Non_IP.objects.create(**retrieval_data)
-		camera = Camera.objects.create(retrieval_model=retrieval_model, **validated_data)
-		return camera
-'''
-
-
+	def get_lat_lng(self, data):
+		lat_lng = '{{ "type": "Point", "coordinates": [ {}, {} ] }}'.format(data.get('lat',None), data.get('lng',None))
+		lat_lng = GEOSGeometry(lat_lng)
+		return lat_lng	
 
 
 

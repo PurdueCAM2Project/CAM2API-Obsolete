@@ -149,7 +149,7 @@ class CameraDetail(APIView):
 		return(Response(serializer.data))
 
 
-	def put(self, request, cd, pk, format=None):
+	def put(self, request, cd, format=None):
 		"""
 		Handles HTTP PUT requests to a specific camera in the database and modifies the 
 			given camera object in the database
@@ -160,15 +160,9 @@ class CameraDetail(APIView):
 				or a HTTP 400 error if the camera cannot be edited to the database
 		"""
 		camera = self.get_object()
-		try:
-			lat_lng_point = '{{"type": "Point", "coordinates": [{}, {}]}}' .format(request.data['lat'], request.data['lng'])
-			lat_lng = GEOSGeometry(lat_lng_point)
-			data = request.data
-			data['lat_lng'] = lat_lng
-		except:
-			raise Http404
-
-		serializer = CameraSerializer(camera, data=request.data)
+		data = self.convert_data(request.data)
+		print(data)
+		serializer = CameraSerializer(camera, data=data)
 		if serializer.is_valid():
 			serializer.save()
 			return(Response(serializer.data))
@@ -190,7 +184,15 @@ class CameraDetail(APIView):
 		camera.delete()
 		return(Response(status=status.HTTP_204_NO_CONTENT))
 
-
+	def convert_data(self,data):     #needs further modification to make it more explicit
+		if "url" in data.keys():
+			url = data.pop("url")
+			data["retrieval_model"] = {"url":url}
+		elif "port" and "ip" in data.keys():
+			port = data.pop("port")
+			ip = data.pop("ip")
+			data["retrieval_model"] = {"ip":ip, "port":port}		
+		return data 
 # class CameraRetrieveMixin(obejct):
 # 	def retrieve(self, request, *args, **kwargs):
 # 		instance = self.get_object()
