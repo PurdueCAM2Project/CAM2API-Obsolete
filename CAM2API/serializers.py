@@ -69,7 +69,6 @@ class CameraSerializer(serializers.ModelSerializer):
 
 	class Meta:
 		model = Camera
-<<<<<<< HEAD
 		fields = ('pk', 'camera_id', 'city' ,'state', 'country', 'retrieval_model','lat','lng','lat_lng','source','source_url',
 			'date_added','last_updated','camera_type','description','is_video','framerate',
 			'outdoors','indoors','traffic','inactive','resolution_w','resolution_h')
@@ -195,11 +194,6 @@ class CameraSerializer(serializers.ModelSerializer):
 # 			'outdoors','indoors','traffic','inactive','resolution_w','resolution_h', 'content_type', 'object_id', 'retrieval_model')
 # 		# Need to searialize 'retrieval_model'
 
-=======
-		fields = ('camera_id','city','state','country','lat', 'lng','lat_lng','source','source_url',\
-			'date_added','last_updated','camera_type','description','is_video','framerate',\
-			'outdoors','indoors','traffic','inactive','resolution_w','resolution_h', 'retrieval_model')
->>>>>>> master
 
 # class CameraSerializer(serializers.Serializer):
 # 	camera_id = serializers.IntegerField() # id from old database 
