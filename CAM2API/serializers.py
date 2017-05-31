@@ -26,31 +26,36 @@ class IPSerializer(serializers.ModelSerializer):
 		fields = ('ip','port')
 
 	def create(self, validated_data):
-		print("Create")
 		return IP.objects.create(**validated_data)
 
 	def to_internal_value(self, data):
 		ret = {}
-		print("HERE")
-		erros = {}
+		errors = []
 		for field in self.fields:  #self_writable_field  self.fields returns a dict {'ip': CharFied}   self.fieldss.values.field_name returns 'ip'
-			validate_method = getattr(self, 'validate_'+field)
+			try:
+				validate_method = getattr(self, 'validate_'+field)
+			except AttributeError:
+				print("The IP calss validation method {} does not exist" .format('validate_'+field))
+				validate_method = None
+
 			if validate_method is not None:
 				try:
 					validated_value = validate_method(data.get(field))
 				except ValidationError as exc: 
-					errros[field] = exc.details 
+					errros.append(exc.details) 
 				else:
 					ret[field] = validated_value
-			
-		if erros:
+					errors.append({})
+			else:
+				ret[field] = data.get(field,None)
+
+		if any(errors):
 			raise ValidationError(errors)
 		else:
 			return ret 
 
 	def to_representation(self, instance):
 		ret = {}
-		print("There")
 		for f in self.fields.values():
 			value = getattr(instance, f.field_name)  #f.field_name returns 'ip','port', 
 			ret[f.field_name] = f.to_representation(value)
@@ -58,7 +63,7 @@ class IPSerializer(serializers.ModelSerializer):
 
 
 	def validate_ip(self,value):
-		pattern = r'\d+.\d+.\d+.\d+'
+		pattern = r'^\d+.\d+.\d+.\d+$'
 		if re.search(pattern,value) is None:
 			raise serializers.ValidationError('This is not valid IP address')
 		return value
@@ -78,14 +83,10 @@ class CameraSerializer(serializers.ModelSerializer):
 
 	class Meta:
 		model = Camera
-
 		fields = ('pk', 'camera_id', 'city' ,'state', 'country', 'retrieval_model','lat','lng','lat_lng','source','source_url',
 			'date_added','last_updated','camera_type','description','is_video','framerate',
 			'outdoors','indoors','traffic','inactive','resolution_w','resolution_h')
-
-		read_only_fields = ('pk', 'camera_id', 'city' ,'state', 'country', 'retrieval_model','lat','lng','source','source_url',
-			'date_added','last_updated','camera_type','description','is_video','framerate',
-			'outdoors','indoors','traffic','inactive','resolution_w','resolution_h')
+		extra_kwargs = {'lat_lng':{'write_only':True}}
 		
 
 	def create(self, validated_data):   #Deserialize
@@ -99,7 +100,7 @@ class CameraSerializer(serializers.ModelSerializer):
 
 	def to_internal_value(self, data):  #Deserialize
 		ret = {}
-
+		errors = []
 		for field in self.fields:
 			if field == "retrieval_model":
 				retrieval_model_data = data.get('retrieval_model', None)      #extract "retrieval_model" and process it later based on which base Serializer to exploit 
@@ -108,23 +109,40 @@ class CameraSerializer(serializers.ModelSerializer):
 				lat_lng = GEOSGeometry(lat_lng)	
 				ret[field] = lat_lng					#create GEOSGeomoetry object 
 			else:
-				ret[field] = data.get(field,None)
+				
+				try:
+					validate_method = getattr(self, 'validate_'+field)
+				except AttributeError:
+					validate_method = None
 
+				if validate_method is not None:
+					try:
+						validated_value = validate_method(data.get(field,None))
+					except ValidationError as exc:
+						errors.append(exc.detials)
+					else:
+						ret[field] = validated_value
+						errors.append({})
+				else:
+					ret[field] = data.get(field,None)
 		if ret is not None:
 			if 'ip' in retrieval_model_data.keys():
 				a = IPSerializer(data=retrieval_model_data)     #use IPSerializer as base serializer if "ip" exists in request
 			else:	
 				a = NonIPSerializer(data=retrieval_model_data)   	#use NonIPSerializer otherwise 
-			if a.is_valid():
-				ret['retrieval_model'] = a.to_internal_value(retrieval_model_data)
-		return ret
+			ret['retrieval_model'] = a.to_internal_value(retrieval_model_data)
+		
+		if any(errors):
+			raise ValidationError(errors)
+		else:
+			return ret
 
 	def to_representation(self,instance):   #Serialize
 		ret = {}
-		for field in self.fields.values():
-			if field.field_name != "lat_lng":
-				value = getattr(instance, field.field_name)
-				ret[field.field_name] = field.to_representation(value)  #needs to add read_only_field
+		fields = self._readable_fields
+		for field in fields:
+			value = getattr(instance, field.field_name)
+			ret[field.field_name] = field.to_representation(value) 
 		return ret
 
 	def get_retrieval_model(self,instance):  #Serialize
@@ -132,6 +150,36 @@ class CameraSerializer(serializers.ModelSerializer):
 			return IPSerializer(instance).data   		#Use IPSerializer if retrieval_model object is a IP object()
 		else:
 			return NonIPSerializer(instance).data 		#Use NonIPSerializer if retrieval_model object is Non_IP object
+	
+	def validate_city(self,value):
+		pattern = r'[a-zA-Z]+'
+		if re.search(pattern,str(value)) is None:
+			raise serializers.ValidationError("This is not a valid city name")
+		return value
+	
+	def validate_state(self,value):
+		pattern = r'[a-zA-Z]+'
+		if re.search(pattern,str(value)) is None:
+			raise serializers.ValidationError("This is not a valid state name")
+		return value
+
+	def validate_country(self,value):
+		pattern = r'[a-zA-Z]+'
+		if re.search(pattern,str(value)) is None:
+			raise serializers.ValidationError("This is not a valid country name")
+		return value	
+	
+	def validate_resolution_w(self, value):
+		if int(value) <= 0:
+			raise serializers.ValidationError("This is not a valid resolution for width")
+		return value
+
+	def validate_resolution_h(self, value):
+		if int(value) <= 0:
+			raise serializers.ValidationError("This is not a valid resolution for height")
+		return value
+	
+
 '''
 class NonIPCameraSerializer(serializers.ModelSerializer):
 	

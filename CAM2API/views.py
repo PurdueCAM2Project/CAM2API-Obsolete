@@ -26,7 +26,7 @@ class CameraList(APIView):
 		return: JSON String
 		"""
 		cameras = Camera.objects.all()
-		serializer = IPCameraSerializer(cameras, many=True)
+		serializer = CameraSerializer(cameras, many=True)
 		return Response(serializer.data)
 
 	
@@ -88,12 +88,14 @@ class CameraList(APIView):
 				serializer = IPCameraSerializer(data=data)
 		'''
 		data = self.convert_data(request.data)
+		print(request.data)
 		serializer = CameraSerializer(data=data)
 
 		if serializer.is_valid():
 			serializer.save()
 			return Response(serializer.data)
 		else:	
+			print("Here")
 			return Response(serializer.errors)
 
 	def convert_data(self,data):     #needs further modification to make it more explicit
@@ -183,6 +185,8 @@ class CameraDetail(APIView):
 				or a HTTP 204 error if the camera is deleted from the database
 		"""
 		camera = self.get_object()
+		retrieval_model_delete = camera.retrieval_model
+		retrieval_model_delete.delete()
 		camera.delete()
 		return(Response(status=status.HTTP_204_NO_CONTENT))
 
