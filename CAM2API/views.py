@@ -169,7 +169,7 @@ class CameraDetail(APIView):
 		return(Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST))
 
 
-	def delete(self, request, cd, pk, format=None):
+	def delete(self, request, cd, format=None):
 		"""
 		Handles HTTP DELETE requests to a specific camera in the database
 		input request: the HTTP DELETE request sent to the API
@@ -198,3 +198,16 @@ class CameraDetail(APIView):
 # 		instance = self.get_object()
 # 		serializer = self.get_serializer(instance)
 # 		return Response(serializer.data)
+
+
+class DataConversionMixin(object):
+	def convert_data(self,data):     #needs further modification to make it more explicit
+		if "url" in data.keys():
+			url = data.pop("url")
+			data["retrieval_model"] = {"url":url}
+		elif "port" and "ip" in data.keys():
+			port = data.pop("port")
+			ip = data.pop("ip")
+			data["retrieval_model"] = {"ip":ip, "port":port}		
+		return data 	
+
