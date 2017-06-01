@@ -29,6 +29,9 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 STATIC_ROOT = os.path.join(PROJECT_ROOT, 'staticfiles')
 STATIC_URL = '/staticfiles/'
 
+MEDIA_ROOT = 'media'
+MEDIA_URL = '/media'
+
 # Using white noise to collect static files on production
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage' 
 
@@ -57,4 +60,4 @@ DATABASES['default']['ENGINE'] = 'django.contrib.gis.db.backends.postgis'
 DEBUG = True
 
 # Ensures all API requests are directed through HTTPS
-SECURE_SSL_REDIRECT = True
+SECURE_SSL_REDIRECT = Txrue
