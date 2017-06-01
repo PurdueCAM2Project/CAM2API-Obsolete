@@ -20,6 +20,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Root Project Directory
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 
+
 # Default Set of DEBUG is False
 DEBUG = False
 

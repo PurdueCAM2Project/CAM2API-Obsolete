@@ -27,6 +27,7 @@ class CameraList(APIView):
 		"""
 		cameras = Camera.objects.all()
 		serializer = CameraSerializer(cameras, many=True)
+		print(request.user)
 		return Response(serializer.data)
 
 	
