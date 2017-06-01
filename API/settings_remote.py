@@ -6,6 +6,8 @@ control.
 import dj_database_url
 import os
 
+print("Imported Local Settings......")
+
 """
 This Below are the setting information for the DEVELOPMENT environment
 CAM2API
