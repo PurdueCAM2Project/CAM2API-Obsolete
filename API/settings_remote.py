@@ -60,4 +60,4 @@ DATABASES['default']['ENGINE'] = 'django.contrib.gis.db.backends.postgis'
 DEBUG = True
 
 # Ensures all API requests are directed through HTTPS
-SECURE_SSL_REDIRECT = Txrue
+SECURE_SSL_REDIRECT = True
