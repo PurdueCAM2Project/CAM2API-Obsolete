@@ -8,34 +8,30 @@ import os
 
 print("Imported Remote Settings......")
 
-"""
-This Below are the setting information for the DEVELOPMENT environment
-CAM2API
-"""
 # Root Project Directory
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
+
+# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+BASE_DIR =  os.path.dirname(PROJECT_ROOT)
 
 # SECURITY WARNING: keep the secret key used in production secret!
 # To add secret key variable to Heroku Deployment use "heroku config:add DJANGO_SECRET_KEY=<your secret key>" 
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 
-# Allow all host headers
-ALLOWED_HOSTS = ['*', ]
-
 # Honor the 'X-Forwarded-Proto' header for request.is_secure()
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # Static asset configuration
-STATIC_ROOT = os.path.join(PROJECT_ROOT, 'staticfiles')
+STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static')
 STATIC_URL = '/static/'
+# Extra places for collectstatic to find static files.
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'API/static/api-view'),
+)
 
 # Using white noise to collect static files on production
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage' 
 
-# # More Static File Collection
-# STATICFILES_DIRS = (
-#     os.path.join(PROJECT_ROOT, 'static'),
-#     )
 
 # Ensures all API requests are directed through HTTPS
 # SECURE_SSL_REDIRECT = True

@@ -5,20 +5,11 @@ CAM2API
 
 import os
 
-# Import settings specific to deployment
-try:
-    from .settings_local import *
-except ImportError:
-    try:
-        from .settings_remote import *
-    except ImportError:
-        pass
-
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
 # Root Project Directory
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
+
+# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+BASE_DIR =  os.path.dirname(PROJECT_ROOT)
 
 # Default Set of DEBUG is False
 DEBUG = False
@@ -27,7 +18,6 @@ DEBUG = False
 ALLOWED_HOSTS = ['*']
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -63,6 +53,8 @@ TEMPLATES = [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
+                "django.template.context_processors.i18n",
+                "django.template.context_processors.static",
                 'django.contrib.messages.context_processors.messages',
             ],
         },
@@ -129,3 +121,14 @@ LOGGING = {
         },
     },
 }
+
+
+# Import settings specific to deployment
+try:
+    from .settings_local import *
+except ImportError:
+    try:
+        from .settings_remote import *
+    except ImportError:
+        pass
+
