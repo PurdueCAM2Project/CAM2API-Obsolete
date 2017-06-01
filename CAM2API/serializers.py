@@ -1,8 +1,10 @@
 from rest_framework import serializers
 from CAM2API.models import Camera, IP, Non_IP
 from django.core.exceptions import ValidationError
-import re
 from django.contrib.gis.geos import GEOSGeometry
+import re 
+import geocoder
+import sys
 
 
 class IPSerializer(serializers.ModelSerializer):
@@ -58,6 +60,9 @@ class IPSerializer(serializers.ModelSerializer):
 		if not str(value).isdigit():
 			raise serializers.ValidationError('This is not valid port')
 		return value
+
+	def validate(self, data):
+		pass
 
 class NonIPSerializer(serializers.ModelSerializer):
 	class Meta:
@@ -181,7 +186,25 @@ class CameraSerializer(serializers.ModelSerializer):
 	def get_lat_lng(self, data):
 		lat_lng = '{{ "type": "Point", "coordinates": [ {}, {} ] }}'.format(data.get('lat',None), data.get('lng',None))
 		lat_lng = GEOSGeometry(lat_lng)
-		return lat_lng	
+		return lat_lng
+
+	def validate(self, data):
+		assert "lat" and "lng" in data.keys()
+		geo_checker = geocoder.google([data["lat"], data["lng"]], method="reverse")
+		geo_checker_result = geo_checker.json
+		print(geo_checker.json)
+		if geo_checker_result["status"] == "OK":
+			try:
+				if data.get("city", None) is not None:
+					assert data["city"] == geo_checker_result["city"]
+				if data.get("state", None) is not None:
+					assert data["state"] == geo_checker_result["state"]
+				if data.get("country", None) is not None:
+					assert data["country"] == geo_checker_result["country"]
+			except AssertionError:
+				raise AssertionError
+				print("Invalid")
+		return data 
 
 
 
