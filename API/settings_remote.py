@@ -29,9 +29,6 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 STATIC_ROOT = os.path.join(PROJECT_ROOT, 'staticfiles')
 STATIC_URL = '/static/'
 
-MEDIA_ROOT = 'media'
-MEDIA_URL = '/media/'
-
 # Using white noise to collect static files on production
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage' 
 
