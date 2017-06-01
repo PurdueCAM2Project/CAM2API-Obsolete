@@ -193,17 +193,17 @@ class CameraSerializer(serializers.ModelSerializer):
 		geo_checker = geocoder.google([data["lat"], data["lng"]], method="reverse")
 		geo_checker_result = geo_checker.json
 		print(geo_checker.json)
-		if geo_checker_result["status"] == "OK":
-			try:
-				if data.get("city", None) is not None:
-					assert data["city"] == geo_checker_result["city"]
-				if data.get("state", None) is not None:
-					assert data["state"] == geo_checker_result["state"]
-				if data.get("country", None) is not None:
-					assert data["country"] == geo_checker_result["country"]
-			except AssertionError:
-				raise AssertionError
-				print("Invalid")
+		# if geo_checker_result["status"] == "OK":
+		# 	try:
+		# 		if data.get("city", None) is not None:
+		# 			assert data["city"] == geo_checker_result["city"]
+		# 		if data.get("state", None) is not None:
+		# 			assert data["state"] == geo_checker_result["state"]
+		# 		if data.get("country", None) is not None:
+		# 			assert data["country"] == geo_checker_result["country"]
+		# 	except AssertionError:
+		# 		raise AssertionError("Invalid location data")
+		# 		print("Invalid")
 		return data 
 
 
