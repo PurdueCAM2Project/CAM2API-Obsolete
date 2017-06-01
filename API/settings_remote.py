@@ -53,4 +53,4 @@ DATABASES = {
 DATABASES['default']['ENGINE'] = 'django.contrib.gis.db.backends.postgis'
 
 # Default Set of DEBUG is False
-DEBUG = False
+DEBUG = True
