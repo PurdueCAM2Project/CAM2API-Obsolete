@@ -21,6 +21,9 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 # Honor the 'X-Forwarded-Proto' header for request.is_secure()
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
+# Ensures all API requests are directed through HTTPS
+SECURE_SSL_REDIRECT = True
+
 # Static asset configuration
 STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static')
 STATIC_URL = '/static/'
@@ -50,7 +53,4 @@ DATABASES = {
 DATABASES['default']['ENGINE'] = 'django.contrib.gis.db.backends.postgis'
 
 # Default Set of DEBUG is False
-DEBUG = True
-
-# Ensures all API requests are directed through HTTPS
-SECURE_SSL_REDIRECT = True
+DEBUG = False
