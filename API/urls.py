@@ -16,7 +16,13 @@ Including another URLconf
 from django.conf.urls import url, include
 from django.contrib import admin
 
+from django.views.generic.base import RedirectView
+
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^', include('CAM2API.urls')),
+    # url(r'^.*$', RedirectView.as_view(url='/cameras/', permanent=False), name='index'),
 ]
+
+# handler404 = 'API.views.resource_not_found' 
+# handler500 = 'API.views.server_error' 

@@ -1,3 +1,4 @@
 web: python manage.py makemigrations
 web: python manage.py migrate
-web: gunicorn API.wsgi
+web: python manage.py collectstatic --noinput
+web: gunicorn API.wsgi --log-file=debug.log

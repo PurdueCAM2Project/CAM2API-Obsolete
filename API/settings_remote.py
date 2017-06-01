@@ -6,6 +6,8 @@ control.
 import dj_database_url
 import os
 
+print("Imported Remote Settings......")
+
 """
 This Below are the setting information for the DEVELOPMENT environment
 CAM2API
@@ -18,7 +20,7 @@ PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 
 # Allow all host headers
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['*', ]
 
 # Honor the 'X-Forwarded-Proto' header for request.is_secure()
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')

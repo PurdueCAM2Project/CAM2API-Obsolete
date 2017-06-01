@@ -224,10 +224,13 @@ class CameraSerializer(serializers.ModelSerializer):
 # 	city = serializers.CharField()
 # 	state = serializers.CharField()
 # 	country = serializers.CharField()
-# 	# lat_lng NO SERIALIZER
+# 	lat = serializers.FloatField()
+# 	lng = serializers.FloatField()
+# 	# lat_lng = serializers.GeometryField() # Sets geometry field points to geography in postgis
+	
 # 	# Source Information:
 # 	source = serializers.CharField()
-# 	source_url = serializers.CharField() # URL of source (Not for image data!)
+# 	source_url = serializers.CharField() # URL of the provider of the source (NOT for image data!)
 # 	# Time Information:
 # 	date_added = serializers.DateTimeField()
 # 	last_updated = serializers.DateTimeField() # Last known time a snapshot was downloaded
@@ -243,20 +246,20 @@ class CameraSerializer(serializers.ModelSerializer):
 # 	inactive = serializers.NullBooleanField() # True if data cannot be accessed from the camera Null if unknown.
 # 	resolution_w = serializers.IntegerField() # Resolution width determined automatically 
 # 	resolution_h = serializers.IntegerField() # Resolution height determined automatically 
+# 	# created_by = # Token for user who added the camera to the database
 
+# 	# Image Retrieval objects:
+# 	# For more information see https://docs.djangoproject.com/en/1.10/ref/contrib/contenttypes/#generic-relations
 
-# 	# id = serializers.IntegerField(read_only=True)
-# 	# title = serializers.CharField(required=False, allow_blank=True, max_length=100)
-# 	# code = serializers.CharField(style={'base_template': 'textarea.html'})
-# 	# linenos = serializers.BooleanField(required=False)
-# 	# language = serializers.ChoiceField(choices=LANGUAGE_CHOICES, default='python')
-# 	# style = serializers.ChoiceField(choices=STYLE_CHOICES, default='friendly')
+# 	# content_type = serializers.ForeignKey(ContentType, on_delete=serializers.CASCADE)
+# 	# object_id = models.PositiveIntegerField()
+# 	retrieval_model = GenericForeignKey()
 
-# 	def create(self, validated_data):
-# 		"""
-# 		Create and return a new 'Camera' instance, given the validated data.
-# 		"""
-# 		return Camera.objects.create(**validated_data)
+	# def create(self, validated_data):
+	# 	"""
+	# 	Create and return a new 'Camera' instance, given the validated data.
+	# 	"""
+	# 	return Camera.objects.create(**validated_data)
 
 # 	def update(self, instance, validated_data):
 # 		"""
