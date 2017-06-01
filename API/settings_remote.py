@@ -55,4 +55,4 @@ DATABASES['default']['ENGINE'] = 'django.contrib.gis.db.backends.postgis'
 ALLOWED_HOSTS = ['*']
 
 # Default Set of DEBUG is False
-DEBUG = True
+DEBUG = False
