@@ -30,7 +30,7 @@ STATIC_ROOT = os.path.join(PROJECT_ROOT, 'staticfiles')
 STATIC_URL = '/staticfiles/'
 
 MEDIA_ROOT = 'media'
-MEDIA_URL = '/media'
+MEDIA_URL = '/media/'
 
 # Using white noise to collect static files on production
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage' 
