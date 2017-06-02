@@ -5,7 +5,6 @@ control.
 """
 import dj_database_url
 import os
-from django.contrib.gis.geos import GEOSException, GEOSGeometry
 
 print("Imported Remote Settings......")
 
@@ -41,10 +40,11 @@ STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 # SECURE_SSL_REDIRECT = True
 
 # Get geoDjango GEOS and GDAL library paths from Heroku environment variables
+# GEOS_LIBRARY_PATH = os.environ.get('GEOS_LIBRARY_PATH')
+# GDAL_LIBRARY_PATH = os.environ.get('GDAL_LIBRARY_PATH')
+
 GEOS_LIBRARY_PATH = os.environ.get('GEOS_LIBRARY_PATH')
 GDAL_LIBRARY_PATH = os.environ.get('GDAL_LIBRARY_PATH')
-
-
 
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
 # Heroku Database
