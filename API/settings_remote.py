@@ -24,6 +24,9 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 # Ensures all API requests are directed through HTTPS
 SECURE_SSL_REDIRECT = True
 
+# Using white noise to collect static files on production
+STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage' 
+
 # Static asset configuration
 STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static')
 STATIC_URL = '/static/'
@@ -31,9 +34,6 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'API/static/api-view'),
 )
-
-# Using white noise to collect static files on production
-STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage' 
 
 
 # Ensures all API requests are directed through HTTPS
