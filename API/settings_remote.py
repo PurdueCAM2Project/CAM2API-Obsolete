@@ -49,7 +49,7 @@ DATABASES = {
     'default': dj_database_url.config(default=os.environ['DATABASE_URL'])
 }
 # Add PostGIS engine
-DATABASES['default']['ENGINE'] = 'django.contrib.gis.db.backends.postgis'
+DATABASES['default']['ENGINE'] = 'django.contrib.gis.db.backends.postgis' 
 
 ALLOWED_HOSTS = ["tranquil-mesa-16194.herokuapp.com"]
 
