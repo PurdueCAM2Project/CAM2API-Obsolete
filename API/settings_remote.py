@@ -25,7 +25,7 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 SECURE_SSL_REDIRECT = True
 
 # Using white noise to collect static files on production
-# STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage' 
+STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage' 
 
 # Static asset configuration
 STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static')
