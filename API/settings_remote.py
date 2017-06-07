@@ -24,17 +24,27 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 # Ensures all API requests are directed through HTTPS
 SECURE_SSL_REDIRECT = True
 
-# Using white noise to collect static files on production
-STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage' 
+# # Using white noise to collect static files on production
+# STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage' 
 
-# Static asset configuration
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+# # Static asset configuration
+# STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+# STATIC_URL = '/static/'
+# # Extra places for collectstatic to find static files.
+# STATICFILES_DIRS = (
+#     os.path.join(BASE_DIR, 'API/static/api-view'),
+#     os.path.join(BASE_DIR, 'API/static'),
+# )
+# WHITENOISE_ROOT = os.path.join(BASE_DIR, 'staticfiles', 'root') 
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 STATIC_URL = '/static/'
-# Extra places for collectstatic to find static files.
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'API/static/api-view'),
-    os.path.join(BASE_DIR, 'API/static'),
+    os.path.join(BASE_DIR, 'static'),
 )
+STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
+# for /static/root/favicon.ico    
 WHITENOISE_ROOT = os.path.join(BASE_DIR, 'staticfiles', 'root') 
 
 # Ensures all API requests are directed through HTTPS
