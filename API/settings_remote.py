@@ -64,4 +64,4 @@ DATABASES['default']['ENGINE'] = 'django.contrib.gis.db.backends.postgis'
 ALLOWED_HOSTS = ["tranquil-mesa-16194.herokuapp.com"]
 
 # Default Set of DEBUG is False
-DEBUG = False
+DEBUG = True
