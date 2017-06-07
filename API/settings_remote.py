@@ -35,7 +35,7 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'API/static/api-view'),
     os.path.join(BASE_DIR, 'API/static'),
 )
-
+WHITENOISE_ROOT = os.path.join(BASE_DIR, 'staticfiles', 'root') 
 
 # Ensures all API requests are directed through HTTPS
 # SECURE_SSL_REDIRECT = True
