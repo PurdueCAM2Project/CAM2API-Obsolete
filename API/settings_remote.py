@@ -37,15 +37,14 @@ SECURE_SSL_REDIRECT = True
 # )
 # WHITENOISE_ROOT = os.path.join(BASE_DIR, 'staticfiles', 'root') 
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static')
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+# Extra places for collectstatic to find static files.
 STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'API', 'static'),
+    os.path.join(BASE_DIR, 'API/static'),
 )
+# https://warehouse.python.org/project/whitenoise/
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
-# for /static/root/favicon.ico    
-WHITENOISE_ROOT = os.path.join(BASE_DIR, 'staticfiles', 'root') 
 
 # Ensures all API requests are directed through HTTPS
 # SECURE_SSL_REDIRECT = True
