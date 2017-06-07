@@ -33,7 +33,7 @@ STATIC_URL = '/static/'
 # Extra places for collectstatic to find static files.
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'API/static/api-view'),
-    os.path.join(BASE_DIR, 'API/static'),
+    os.path.join(BASE_DIR, 'API/static'), 
 )
 
 
