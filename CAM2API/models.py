@@ -33,10 +33,8 @@ class Camera(models.Model):
 	country = models.CharField(max_length=50, null=False)
 	lat = models.FloatField(max_length=100, null=False)
 	lng = models.FloatField(max_length=100, null=False)
-	lat_lng = models.GeometryField(geography=True, default=0) # Sets geometry field points to geography in postgis
-	
+	lat_lng = models.GeometryField(geography=True, null=True) # Sets geometry field points to geography in postgis
 
-	
 	# Source Information:
 	source = models.CharField(max_length=30, null=False)
 	source_url = models.CharField(max_length=100, null=False) # URL of the provider of the source (NOT for image data!)

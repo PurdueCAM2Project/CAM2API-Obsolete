@@ -83,8 +83,9 @@ class CameraSerializer(serializers.ModelSerializer):
 	def create(self, validated_data):   #Deserialize
 		print("Create")
 		retrieval_data = validated_data.pop('retrieval_model')
+		print(retrieval_data['url'])
 		if 'url' in retrieval_data.keys():
-			retrieval_model = Non_IP.objects.create(**retrieval_data)  #create Non_IP object if "url" exists in request 
+			retrieval_model = Non_IP.objects.create(url=retrieval_data['url'])  #create Non_IP object if "url" exists in request 
 		else:
 			retrieval_model = IP.objects.create(**retrieval_data)	 #create IP object otherwise 
 		camera = Camera.objects.create(retrieval_model=retrieval_model, **validated_data)
@@ -97,7 +98,7 @@ class CameraSerializer(serializers.ModelSerializer):
 		for key, value in validated_data.items():
 			if value is not None:
 				setattr(instance,key,value)
-		setattr(instance,'lat_lng', self.get_lat_lng(validated_data))
+		setattr(instance,'lat_lng', self.set_lat_lng(validated_data))
 		for key, value in retrieval_data.items():
 			setattr(retrieval_instance, key, value)
 		retrieval_instance.save()
@@ -111,7 +112,7 @@ class CameraSerializer(serializers.ModelSerializer):
 			if field == "retrieval_model":
 				retrieval_model_data = data.get('retrieval_model', None)      #extract "retrieval_model" and process it later based on which base Serializer to exploit 
 			elif field == "lat_lng":	
-				ret[field] = self.get_lat_lng(data)					#create GEOSGeomoetry object 
+				ret[field] = self.set_lat_lng(data)					#create GEOSGeomoetry object 
 			else:
 				
 				try:
@@ -186,7 +187,7 @@ class CameraSerializer(serializers.ModelSerializer):
 			raise serializers.ValidationError("This is not a valid resolution for height")
 		return value
 	
-	def get_lat_lng(self, data):
+	def set_lat_lng(self, data):
 		lat_lng = '{{ "type": "Point", "coordinates": [ {}, {} ] }}'.format(data.get('lat',None), data.get('lng',None))
 		lat_lng = GEOSGeometry(lat_lng)
 		return lat_lng
@@ -207,7 +208,7 @@ class CameraSerializer(serializers.ModelSerializer):
 		# 	except AssertionError:
 		# 		raise AssertionError("Invalid location data")
 		# 		print("Invalid")
-		return data 
+		return data
 
 
 

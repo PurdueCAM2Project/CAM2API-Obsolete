@@ -1,6 +1,6 @@
 # Import Models and Serializer
 from CAM2API.models import Camera, Non_IP, IP
-from CAM2API.serializers import (CameraSerializer, IPSerializer, NonIPSerializer)
+from CAM2API.serializers import CameraSerializer, IPSerializer, NonIPSerializer
 
 from django.contrib.gis.geos import GEOSGeometry
 
@@ -88,14 +88,14 @@ class CameraList(APIView):
 				serializer = IPCameraSerializer(data=data)
 		'''
 		data = self.convert_data(request.data)
-		print(request.data)
 		serializer = CameraSerializer(data=data)
 
 		if serializer.is_valid():
 			serializer.save()
+			print("Data added")
 			return Response(serializer.data)
 		else:	
-			print("Here")
+			print("Data not added")
 			return Response(serializer.errors)
 
 	def convert_data(self,data):     #needs further modification to make it more explicit
