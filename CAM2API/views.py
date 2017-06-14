@@ -105,8 +105,8 @@ class CameraList(APIView):
 		elif "port" and "ip" in data.keys():
 			port = data.pop("port")
 			ip = data.pop("ip")
-			data["retrieval_model"] = {"ip":ip, "port":port}		
-		return data 
+			data["retrieval_model"] = {"ip":ip, "port":port}
+		return data
 
 class CameraDetail(APIView):
 	"""

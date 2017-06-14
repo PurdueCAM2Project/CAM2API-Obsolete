@@ -81,9 +81,7 @@ class CameraSerializer(serializers.ModelSerializer):
 		
 
 	def create(self, validated_data):   #Deserialize
-		print("Create")
 		retrieval_data = validated_data.pop('retrieval_model')
-		print(retrieval_data['url'])
 		if 'url' in retrieval_data.keys():
 			retrieval_model = Non_IP.objects.create(url=retrieval_data['url'])  #create Non_IP object if "url" exists in request 
 		else:
