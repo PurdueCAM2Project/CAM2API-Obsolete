@@ -1,7 +1,6 @@
 # Import Models and Serializer
-from CAM2API.models import Camera, Non_IP, IP
+from CAM2API.models import Camera, Non_IP, IP, Account
 from CAM2API.serializers import (CameraSerializer, IPSerializer, NonIPSerializer)
-
 from django.contrib.gis.geos import GEOSGeometry
 
 from django.http import Http404
@@ -12,13 +11,31 @@ from rest_framework import status
 from django.db.models.query import QuerySet
 from django.shortcuts import get_object_or_404
 
+from CAM2API.serializers import AccountSerializer, LoginSerializer
+#from rest_framework.decorators import permission_classes
+# from django.contrib.auth.decorators import permission_required
+# from django.utils.decorators import method_decorator
+
+from CAM2API.mixins import CAM2APIPermissionRequiredMixin
+from CAM2API.permissions import CAM2APIPermission
+from CAM2API.authentication import AccountTokenAuthentication
+
+from django.contrib.auth import authenticate
+from rest_framework.authtoken.models import Token
+
+
 class CameraList(APIView):
 	"""
 	Returns:
 		GET - JSON response containing all the camera data in the database
 		POST - Creates new camera objects in the database
 	"""
-	def get(self, request, format=None):
+	#@method_decorator(permission_classes((IsAuthenticated, )))
+	#permission_required = (CAM2APIPermission, )
+	#authentication_classes = (AccountExpiringTokenAuthentication, )
+	#permission_classes = (CAM2APIPermission, )
+
+	def get(self, request, format = None):
 		"""
 		Returns JSON response containing all the camera data in the database
 		input request: HTTP GET request
@@ -27,10 +44,12 @@ class CameraList(APIView):
 		"""
 		cameras = Camera.objects.all()
 		serializer = CameraSerializer(cameras, many=True)
-		print(request.user)
+		#print("Hi")
+		#print(request.user)
+		#print(request.auth)
+		#print(request.user.has_perm(IsAuthenticated))
 		return Response(serializer.data)
 
-	
 	def post(self, request, format=None):
 		"""
 		Creates new camera objects in the database and returns a HTTP 201 if success
@@ -89,14 +108,12 @@ class CameraList(APIView):
 				serializer = IPCameraSerializer(data=data)
 		'''
 		data = self.convert_data(request.data)
-		print(request.data)
 		serializer = CameraSerializer(data=data)
 
 		if serializer.is_valid():
 			serializer.save()
 			return Response(serializer.data)
 		else:	
-			print("Here")
 			return Response(serializer.errors)
 
 	def convert_data(self,data):     #needs further modification to make it more explicit
@@ -108,6 +125,14 @@ class CameraList(APIView):
 			ip = data.pop("ip")
 			data["retrieval_model"] = {"ip":ip, "port":port}		
 		return data 
+
+
+	def get_authenticate_header(self, request):
+		authenticators = self.get_authenticators()
+		if authenticators:
+			header = authenticators[0].authenticate_header(request)
+			print(header, authenticators)
+			return header
 
 class CameraDetail(APIView):
 	"""
@@ -145,6 +170,7 @@ class CameraDetail(APIView):
 		return: JSON/API response containing the relevant camera data or a HTTP 404 error
 				if there is no camera that matches the pk 
 		"""
+		print(dir(request))
 		camera = self.get_object()
 		serializer = CameraSerializer(camera)
 		return(Response(serializer.data))
@@ -211,4 +237,46 @@ class DataConversionMixin(object):
 			ip = data.pop("ip")
 			data["retrieval_model"] = {"ip":ip, "port":port}		
 		return data 	
+
+
+class AccountCreate(APIView):
+	serializer_class = AccountSerializer
+	def post(self, request, format=None):
+		data = request.data
+		serializer = AccountSerializer(data=data)
+		if serializer.is_valid():
+			serializer.save()
+		else:
+			print(serializer.errors)
+		return Response(serializer.data)
+
+
+	def get(self, request, format=None):
+		accounts = Account.objects.all()
+		serializer = AccountSerializer(accounts, many=True)
+		return Response(serializer.data)
+			
+class AccountLogin(APIView):
+	serializer_class = LoginSerializer
+
+	def post(self, request, *args, **kwargs):
+		data = request.data
+		serializer = LoginSerializer(data=data)
+		if serializer.is_valid():
+			print("1")
+			return Response(serializer.data)
+		return Response(serializer.errors)
+		# username = request.POST.get('username', None)
+		# password = request.POST.get('password', None)
+		# user = authenticate(username=username, password=password)
+		# print(username,password)
+		# if user is not None:
+		# 	if user.is_active:
+		# 		token, created = Token.objects.get_or_create(user=user)
+		# 		request.seesion['auth'] = token.key 
+		# 		return Response({'token':token.key})
+		# raise Http404
+
+
+
 

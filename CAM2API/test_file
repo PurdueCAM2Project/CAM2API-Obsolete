@@ -1,0 +1,75 @@
+ data = {"ip": "10", "city":"wl", "country":"US", "state":"IN", "camera_id": 270}
+from CAM2API.models import Camera, Non_IP, IP
+from CAM2API.serializers import (NonIPCameraSerializer, IPCameraSerializer, IPSerializer, NonIPSerializer)
+data = {"ip": "10", "city":"wl", "country":"US", "state":"IN", "camera_id": 271, "port":10}
+ip_s = IPCameraSerializer(data=data)
+
+data = {"camera_id":253,"lat":35.6895,"lng":139.6917,"city":'Tokyo',"country":'JP',"source":'google',"source_url":'www.google.com',"last_updated":'2016-04-15 07:41:52',"description":'camera',"is_video":1,"framerate":0.3,"outdoors":True,"indoors":False,"traffic":False,"inactive":False,"resolution_w":1920,"resolution_h":1080,"camera_type":1, "ip":"192.168.1.1", "port":8000}
+
+http --json POST http://127.0.0.1:8000/cameras.json lat=35.6895 lng=139.6917 city='Tokyo' country='JP' source='google' source_url='www.google.com' last_updated='2016-04-15 07:41:52' description='This is a test camera' is_video=1 framerate=0.3 outdoors=true indoors=false traffic=false inactive=false resolution_w=1920 resolution_h=1080 camera_type=1 ip="192.168.1.1" port=8000 camera_id=255
+
+from CAM2API.models import Camera, Non_IP, IP
+from CAM2API.serializers import (NonIPCameraSerializer, IPCameraSerializer, IPSerializer, NonIPSerializer)
+a = IP(ip="192.169", port=8000)
+b = Camera(rip=a, camera_id=10)
+c = IPCameraSerializer(b)
+c.to_representation(b)
+
+
+b = Camera(ip=a, camera_id=3)
+b.save()
+c = IPCameraSerializer(b)
+
+from CAM2API.models import Camera, Non_IP, IP
+from CAM2API.serializers import (NonIPCameraSerializer, IPCameraSerializer, IPSerializer, NonIPSerializer)
+b_d={"ip":"129.1.1.1","port":8000}
+b_d={"camera_id":100,"retrieval_model":{"ip":"192.168.1.1", "port":8000}}
+b = IPCameraSerializer(data=b_d)
+b.is_valid()
+b.data
+
+from CAM2API.models import Camera, Non_IP, IP
+from CAM2API.serializers import (NonIPCameraSerializer, IPCameraSerializer, IPSerializer, NonIPSerializer)
+b_d={"camera_id":100,"retrieval_model":{"url":"aq.gs"}}
+b = IPCameraSerializer(data=b_d)
+b.is_valid()
+a = Camera.objects.get(camera_id=125)
+
+http --json POST http://127.0.0.1:8000/cameras.json lat=35.6895 lng=139.6917 city='Tokyo' country='JP' source='google' source_url='www.google.com' last_updated='2016-04-15 07:41:52' description='This is a test camera' is_video=1 framerate=0.3 outdoors=True indoors=False traffic=False inactive=False resolution_w=1920 resolution_h=1080 camera_type=1 url="127.0.0.1" camera_id=310
+
+from CAM2API.models import Camera, Non_IP, IP
+from CAM2API.serializers import (CameraSerializer, IPSerializer, NonIPSerializer)
+data = {"lat":35.6895,"lng":139.6917,"city":'Tokyo',"country":'JP',"source":'google',"source_url":'www.google.com',"last_updated":'2016-04-15 07:41:52',"description":'camera',"is_video":1,"framerate":0.3,"outdoors":True,"indoors":False,"traffic":False,"inactive":False,"resolution_w":1920,"resolution_h":1080,"camera_type":1, "retrieval_model":{"ip":"192.168.1.1","port":8000}, "camera_id":254}
+b = CameraSerializer(data=data)
+b.is_valid()
+b.save()
+a = Camera.objects.get(camera_id=125)
+
+from CAM2API.models import Camera, Non_IP, IP
+from CAM2API.serializers import (CameraSerializer, IPSerializer, NonIPSerializer)
+data = {"lat":35.6895,"lng":139.6917,"city":'Shinjuku-ku',"country":'JP',"source":'google',"source_url":'www.google.com',"last_updated":'2016-04-15 07:41:52',"description":'camera',"is_video":1,"framerate":0.3,"outdoors":True,"indoors":False,"traffic":False,"inactive":False,"resolution_w":1920,"resolution_h":1080,"camera_type":1, "retrieval_model":{"ip":"192.168.1.1","port":8000}, "camera_id":254}
+a = Camera.objects.get(camera_id=254)
+b = CameraSerializer(a,data=data)
+b.is_valid()
+b.save()
+
+
+
+http --json DELETE http://127.0.0.1:8000/cameras/254.json
+
+
+from CAM2API.models import Camera, Non_IP, IP, BlackList
+from CAM2API.serializers import (CameraSerializer, IPSerializer, NonIPSerializer, BlackListSerializer)
+data = {"lat":35.6895,"lng":139.6917,"city":'Shinjuku-ku',"country":'JP',"source":'google',"source_url":'www.google.com',"last_updated":'2016-04-15 07:41:52',"description":'camera',"is_video":1,"framerate":0.3,"outdoors":True,"indoors":False,"traffic":False,"inactive":False,"resolution_w":1920,"resolution_h":1080,"camera_type":1, "retrieval_model":{"ip":"192.168.1.1","port":8000}, "camera_id":254, "key":1}
+b = CameraSerializer(data=data)
+b.is_valid()
+b.save()
+
+from django.core.urlresolvers import reverse
+
+from django.contrib.auth.models import User
+
+
+
+
+

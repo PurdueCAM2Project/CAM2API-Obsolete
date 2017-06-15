@@ -6,6 +6,17 @@ from django.contrib.gis.db import models # contrib.gis.db ensures the PostGis mo
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
 
+from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.base_user import BaseUserManager
+
+from django.conf import settings
+from django.db.models.signals import post_save
+
+from django.contrib.auth.signals import user_logged_in
+
+from django.dispatch import receiver
+from rest_framework.authtoken.models import Token 
+from CAM2API.signals import account_created
 
 # Camera Model
 class Non_IP(models.Model):
@@ -71,6 +82,90 @@ class Camera(models.Model):
 
 	#def __str__(self):
 	#	return "camera_id: {}, camera_type: {}, image_retrieval: {}".format(camera_id, camera_type, image_retrieval)
+
+class AccountManager(BaseUserManager):
+	use_in_migration = True
+		
+	def _create_user(self, email, password, **extra_fields):
+		email = self.normalize_email(email)
+		account = self.model(email=email, **extra_fields)
+		account.set_password(password)
+		account.save(using=self._db)
+		return account 
+
+	def create_user(self, email, password, **extra_fields):
+		extra_fields.setdefault('is_superuser', False)
+		return self._create_user(email, password, **extra_fields)
+
+	def create_superuser(self, email, password, **extra_fields):
+		extra_fields.setdefault('is_superuser', True)
+		return self._create_user(email, password, **extra_fields)
+
+
+
+class Record(models.Model):
+	#username = models.CharField(max_length=20, null=False)
+	permission = models.CharField(max_length=120, null=False)
+	token = models.CharField(max_length=120, null=False)
+	
+
+class Account(AbstractUser):
+	username = models.CharField(max_length=20, null=False)
+	email = models.EmailField(unique=True)
+	last_login = models.DateTimeField(auto_now_add=True)
+	
+	objects = AccountManager()
+
+	USERNAME_FIELD = 'email'
+	REQUIRED_FIELDS = []
+
+
+
+# @receiver(post_save, sender=settings.AUTH_USER_MODEL)
+# def create_auth_token(sender, **kwargs):
+# 	if kwargs.get('created', False):
+# 		account = kwargs.get('instance', None)
+# 		if account is not None:
+# 			token = Token.objects.create(user=account)
+# 			username =  account.username
+# 			print(dir(account))
+# 			if account.is_superuser is True:
+# 				permission = 'superuser'
+# 			else:
+# 				permission = 'base'
+# 			record = Record.objects.create(username=username, token=token, permission=permission)
+# 			record.save()
+# 		print(Token.objects.get(user=kwargs.get('instance', None)).key)
+
+
+# @receiver(post_save, sender=settings.AUTH_USER_MODEL)
+# def create_auth_token(sender, **kwargs):
+# 	if kwargs.get('created', False):
+# 		account = kwargs.get('instance', None)
+# 		if account is not None:
+# 			Token.objects.create(user=account)
+# 		print(Token.objects.get(user=kwargs.get('instance', None)).key)
+
+#@receiver(user_logged_in, sender=settings.AUTH_USER_MODEL)
+#def create_temp_token(sender, **kwargs):
+#	account = kwargs.get('user', None)
+#	if account:
+#		Token.objects.create(user=account)
+#		print(Token.objects)
+
+#user_logged_in.connect(create_temp_token, sender=Account)
+
+
+
+
+
+#post_save.connect(create_auth_token, sender=Account)
+
+#class Account(AbstractUser):
+#	pass
+	#def create_account(self, username):
+	#	account_created.send(sender = self.__class__, username)
+	
 
 
 

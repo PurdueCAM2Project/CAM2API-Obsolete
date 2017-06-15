@@ -5,21 +5,11 @@ CAM2API
 
 import os
 
-# Import settings specific to deployment
-try:
-    from .settings_local import *
-except ImportError:
-    try:
-        from .settings_remote import *
-    except ImportError:
-        pass
-
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
 # Root Project Directory
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 
+# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+BASE_DIR =  os.path.dirname(PROJECT_ROOT)
 
 # Default Set of DEBUG is False
 DEBUG = False
@@ -28,7 +18,6 @@ DEBUG = False
 ALLOWED_HOSTS = ['*']
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -58,12 +47,15 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': ['API/staticfiles/','API/templates/'],
+        #'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
+                "django.template.context_processors.i18n",
+                "django.template.context_processors.static",
                 'django.contrib.messages.context_processors.messages',
             ],
         },
@@ -71,6 +63,8 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'API.wsgi.application'
+
+AUTH_USER_MODEL = 'CAM2API.Account'
 
 
 # Password validation
@@ -94,8 +88,14 @@ AUTH_PASSWORD_VALIDATORS = [
 # REST_framework libraries
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.BasicAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
+        #'rest_framework.authentication.BasicAuthentication',
+        #'rest_framework.authentication.SessionAuthentication',
+        #'rest_framework.authentication.TokenAuthentication',
+        'CAM2API.authentication.AccountTokenAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        #'rest_framework.permissions.IsAuthenticated',
+        'CAM2API.permissions.CAM2APIPermission', 
     )
 }
 
@@ -111,6 +111,8 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
+
+LOGIN_REDIRECT_URL = '/cameras'
 
 LOGGING = {
     'version': 1,
@@ -130,3 +132,16 @@ LOGGING = {
         },
     },
 }
+
+
+# Import settings specific to deployment
+try:
+    from .settings_local import *
+except ImportError:
+    try:
+        from .settings_remote import *
+    except ImportError:
+        pass
+
+
+

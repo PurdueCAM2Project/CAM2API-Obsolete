@@ -7,6 +7,8 @@ import geocoder
 import sys
 
 
+from CAM2API.models import Account
+
 class IPSerializer(serializers.ModelSerializer):
 
 	class Meta:
@@ -206,7 +208,6 @@ class CameraSerializer(serializers.ModelSerializer):
 		return data 
 
 
-
 # class CameraSerializer(serializers.ModelSerializer):
 # 	
 	    #class Meta:
@@ -290,3 +291,42 @@ class CameraSerializer(serializers.ModelSerializer):
 
 # 		instance.save()
 # 		return instance
+
+class AccountSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = Account
+		fields = ('username', 'email', 'password', )
+		extra_kwargs = {'password': {'write_only': True}}
+
+	def create(self, validated_data):
+		password = validated_data.pop('password', None)
+		email = validated_data.pop('email', None)
+		return Account.objects.create_user(email, password, **validated_data)
+
+
+
+class LoginSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = Account
+		fields = ('username', 'email', 'password', )
+		extra_kwargs = {'password': {'write_only': True}}
+
+	def validate(self, data):
+		print("HERE")
+		username = data.get('username', None)
+		password = data.get('password', None)
+		if username is None or password is None:
+			raise ValidationError("Login failed")
+
+		accounts = Account.objects.filter(username=username)
+
+		if accounts.exists():
+			account = accounts.first()
+			result = account.check_password(password)
+			if not result:
+				raise ValidationError("Password is Incorrect")
+			else:
+				return data
+		else:
+			raise ValidationError("Username is Invalid")
+
