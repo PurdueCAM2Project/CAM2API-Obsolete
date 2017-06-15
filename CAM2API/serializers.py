@@ -146,7 +146,10 @@ class CameraSerializer(serializers.ModelSerializer):
 		fields = self._readable_fields
 		for field in fields:
 			value = getattr(instance, field.field_name)
-			ret[field.field_name] = field.to_representation(value) 
+			try:
+				ret[field.field_name] = field.to_representation(value)
+			except:
+				pass
 		return ret
 
 	def get_retrieval_model(self,instance):  #Serialize
