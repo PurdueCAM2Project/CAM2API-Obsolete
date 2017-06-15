@@ -204,7 +204,12 @@ class CameraSerializer(serializers.ModelSerializer):
 				if data.get("country", None) is not None:
 					assert data["country"] == geo_checker_result["country"]
 			except AssertionError:
+<<<<<<< HEAD
 				raise serializers.ValidationError("Invalid")
+=======
+				raise AssertionError("Invalid location data")
+				print("Invalid")
+>>>>>>> 48305742750fa001aa86f5b75965ec75160d3719
 		return data 
 
 

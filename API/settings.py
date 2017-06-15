@@ -133,6 +133,14 @@ LOGGING = {
     },
 }
 
+ADMINS = [('Ryan', "dailey1@purdue.edu")]
+
+# EMAIL_BACKEND = 'django.core.mail.backend.smtp.EmailBackend'
+# EMAIL_HOST = os.environ()
+# EMAIL_PORT = 
+# EMAIL_HOST_USER = 
+# EMAIL_HOST_PASSWORD = 
+# EMAIL_USE_TLS = True
 
 # Import settings specific to deployment
 try:
