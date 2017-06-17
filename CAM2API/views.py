@@ -1,6 +1,6 @@
 # Import Models and Serializer
 from CAM2API.models import Camera, Non_IP, IP
-from CAM2API.serializers import (CameraSerializer, IPSerializer, NonIPSerializer)
+from CAM2API.serializers import CameraSerializer, IPSerializer, NonIPSerializer
 
 from django.contrib.gis.geos import GEOSGeometry
 
@@ -88,14 +88,14 @@ class CameraList(APIView):
 				serializer = IPCameraSerializer(data=data)
 		'''
 		data = self.convert_data(request.data)
-		print(request.data)
 		serializer = CameraSerializer(data=data)
 
 		if serializer.is_valid():
 			serializer.save()
+			print("Data added")
 			return Response(serializer.data)
 		else:	
-			print("Here")
+			print("Data not added")
 			return Response(serializer.errors)
 
 	def convert_data(self,data):     #needs further modification to make it more explicit
@@ -105,8 +105,8 @@ class CameraList(APIView):
 		elif "port" and "ip" in data.keys():
 			port = data.pop("port")
 			ip = data.pop("ip")
-			data["retrieval_model"] = {"ip":ip, "port":port}		
-		return data 
+			data["retrieval_model"] = {"ip":ip, "port":port}
+		return data
 
 class CameraDetail(APIView):
 	"""
@@ -193,21 +193,3 @@ class CameraDetail(APIView):
 			ip = data.pop("ip")
 			data["retrieval_model"] = {"ip":ip, "port":port}		
 		return data 
-# class CameraRetrieveMixin(obejct):
-# 	def retrieve(self, request, *args, **kwargs):
-# 		instance = self.get_object()
-# 		serializer = self.get_serializer(instance)
-# 		return Response(serializer.data)
-
-
-class DataConversionMixin(object):
-	def convert_data(self,data):     #needs further modification to make it more explicit
-		if "url" in data.keys():
-			url = data.pop("url")
-			data["retrieval_model"] = {"url":url}
-		elif "port" and "ip" in data.keys():
-			port = data.pop("port")
-			ip = data.pop("ip")
-			data["retrieval_model"] = {"ip":ip, "port":port}		
-		return data 	
-
