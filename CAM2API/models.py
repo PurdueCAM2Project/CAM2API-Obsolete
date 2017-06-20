@@ -5,7 +5,6 @@ from django.contrib.gis.db import models # contrib.gis.db ensures the PostGis mo
 
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
-from django.core.validators import MaxValueValidator, MinValueValidator
 import datetime
 
 # Camera Model
@@ -17,13 +16,6 @@ class Non_IP(models.Model):
 class IP(models.Model):
 	ip = models.CharField(max_length=44, null=False)
 	port = models.PositiveIntegerField(null=False, default=80)
-	# brand = models.PositiveIntegerField(null=True)
-	# model = models.PositiveIntegerField(null=True)
-	# video_path = models.CharField(max_length=100, null=False)
-	# image_path = models.CharField(max_length=100, null=False)
-	# rtsp_path = models.CharField(max_length=100, null=False)
-	#camera = GenericRelation(Camera)
-	#camera = models.OneToOneField(Camera, blank=True, null=True, on_delete=models.CASCADE, related_name='IP')
 
 class Camera(models.Model):
 	camera_id = models.PositiveIntegerField(unique=True) # id from old database
@@ -54,21 +46,9 @@ class Camera(models.Model):
 	inactive = models.NullBooleanField() # True if data cannot be accessed from the camera Null if unknown.
 	resolution_w = models.PositiveIntegerField(null=True) # Resolution width determined automatically 
 	resolution_h = models.PositiveIntegerField(null=True) # Resolution height determined automatically 
-	# created_by = # Token for user who added the camera to the database
-	
 	# Image Retrieval objects:
 	# For more information see https://docs.djangoproject.com/en/1.10/ref/contrib/contenttypes/#generic-relations
 	
 	content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, null=True, related_name="retrieval_model") #ContentType table incudes Class<Non_IP> as well as Class<IP>
 	object_id = models.PositiveIntegerField(null=True) #object_id will be automatically generated and represents the sepecfic primary key for each object in the queryset 
 	retrieval_model = GenericForeignKey('content_type', 'object_id')
-	
-	#ip = models.ForeignKey(IP, blank=True, null=True, on_delete=models.CASCADE, related_name="retrieval_model_ip")
-	#non_ip = models.ForeignKey(Non_IP, blank=True, null=True, on_delete=models.CASCADE, related_name="retrieval_model_non_ip")
-
-
-	#def __str__(self):
-	#	return "camera_id: {}, camera_type: {}, image_retrieval: {}".format(camera_id, camera_type, image_retrieval)
-
-
-
