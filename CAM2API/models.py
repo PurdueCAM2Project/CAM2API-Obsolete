@@ -10,12 +10,10 @@ import datetime
 # Camera Model
 class Non_IP(models.Model):
 	url = models.CharField(max_length=100, null=False, unique=True) # URL to the image data 
-	#camera = models.OneToOneField(Camera, blank=True, null=True, on_delete=models.CASCADE, related_name='NIP')
-	#camera = GenericRelation(Camera)
 
 class IP(models.Model):
-	ip = models.CharField(max_length=44, null=False)
-	port = models.PositiveIntegerField(null=False, default=80)
+	ip = models.GenericIPAddressField(unique=True)
+	port = models.PositiveIntegerField(default=80)
 
 class Camera(models.Model):
 	camera_id = models.PositiveIntegerField(unique=True) # id from old database

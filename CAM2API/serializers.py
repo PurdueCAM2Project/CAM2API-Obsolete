@@ -17,31 +17,10 @@ class IPSerializer(serializers.ModelSerializer):
 		return IP.objects.create(**validated_data)
 
 	def to_internal_value(self, data):
-		ret = {}
-		errors = []
-		for field in self.fields:  #self_writable_field  self.fields returns a dict {'ip': CharFied}   self.fieldss.values.field_name returns 'ip'
-			try:
-				validate_method = getattr(self, 'validate_'+field)
-			except AttributeError:
-				validate_method = None
-
-			if validate_method is not None:
-				try:
-					validated_value = validate_method(data.get(field))
-				except ValidationError as exc: 
-					errors.append(exc) 
-				else:
-					ret[field] = validated_value
-			else:
-				ret[field] = data.get(field,None)
-		try:
-			self.validate_uniqueness(ret['ip'], ret['port'])
-		except ValidationError as exc: 
-			errors.append(exc) 
-
-		if any(errors):
-			raise ValidationError(errors)
-		return ret
+		deserialized_data = {}
+		for field in self.fields:
+			deserialized_data[field] = data.get(field,None)
+		return deserialized_data
 
 	def to_representation(self, instance):
 		ret = {}
@@ -49,22 +28,6 @@ class IPSerializer(serializers.ModelSerializer):
 			value = getattr(instance, f.field_name)  #f.field_name returns 'ip','port', 
 			ret[f.field_name] = f.to_representation(value)
 		return ret 
-
-	def validate_ip(self,value):
-		pattern = r'^\d+.\d+.\d+.\d+$'
-		if re.search(pattern,value) is None:
-			raise ValidationError('This is not valid IP address')
-		return value
-
-	def validate_port(self,value):
-		if not str(value).isdigit():
-			raise ValidationError('This is not valid port')
-		return value
-
-	def validate_uniqueness(self, ip, port):
-		identical_ip_cameras = IP.objects.filter(ip=ip, port=port)
-		if identical_ip_cameras.exists():
-			raise ValidationError("A camera with identical ip:port combination already exists")
 
 class NonIPSerializer(serializers.ModelSerializer):
 	class Meta:
@@ -89,7 +52,6 @@ class CameraSerializer(serializers.ModelSerializer):
 		else:
 			retrieval_model = IP.objects.create(**retrieval_data)
 		camera = Camera.objects.create(retrieval_model=retrieval_model, **validated_data)
-		print(camera)
 		return camera
 
 	def update(self, instance, validated_data):  #Deserialize
