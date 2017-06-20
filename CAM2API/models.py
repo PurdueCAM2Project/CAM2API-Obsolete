@@ -5,17 +5,18 @@ from django.contrib.gis.db import models # contrib.gis.db ensures the PostGis mo
 
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
-
+from django.core.validators import MaxValueValidator, MinValueValidator
+import datetime
 
 # Camera Model
 class Non_IP(models.Model):
-	url = models.CharField(max_length=100, null=False) # URL to the image data 
+	url = models.CharField(max_length=100, null=False, unique=True) # URL to the image data 
 	#camera = models.OneToOneField(Camera, blank=True, null=True, on_delete=models.CASCADE, related_name='NIP')
 	#camera = GenericRelation(Camera)
 
 class IP(models.Model):
 	ip = models.CharField(max_length=44, null=False)
-	port = models.PositiveIntegerField(null=True)
+	port = models.PositiveIntegerField(null=False, default=80)
 	# brand = models.PositiveIntegerField(null=True)
 	# model = models.PositiveIntegerField(null=True)
 	# video_path = models.CharField(max_length=100, null=False)
@@ -25,29 +26,28 @@ class IP(models.Model):
 	#camera = models.OneToOneField(Camera, blank=True, null=True, on_delete=models.CASCADE, related_name='IP')
 
 class Camera(models.Model):
-	camera_id = models.PositiveIntegerField(unique=True) # id from old database 
+	camera_id = models.PositiveIntegerField(unique=True) # id from old database
 	# Geography: 
-	
-	city = models.CharField(max_length=30, null=False)
+	city = models.CharField(max_length=30)
 	state = models.CharField(max_length=12, null=True, blank=True)
-	country = models.CharField(max_length=50, null=False)
-	lat = models.FloatField(max_length=100, null=False)
-	lng = models.FloatField(max_length=100, null=False)
-	lat_lng = models.GeometryField(geography=True, null=True) # Sets geometry field points to geography in postgis
+	country = models.CharField(max_length=50)
+	lat = models.FloatField(max_length=100)
+	lng = models.FloatField(max_length=100)
+	lat_lng = models.GeometryField(geography=True, null=False, blank=True) # Sets geometry field points to geography in postgis
 
 	# Source Information:
-	source = models.CharField(max_length=30, null=False)
-	source_url = models.CharField(max_length=100, null=False) # URL of the provider of the source (NOT for image data!)
+	source = models.CharField(max_length=30)
+	source_url = models.CharField(max_length=100) # URL of the provider of the source (NOT for image data!)
 	# Time Information:
 	date_added = models.DateTimeField(auto_now_add=True)
-	last_updated = models.DateTimeField() # Last known time a snapshot was downloaded
+	last_updated = models.DateTimeField(auto_now_add=True) # Last known time a snapshot was downloaded30
 	# Camera Types (Non_ip or IP)
 	CAMERA_TYPES = enumerate(['Non_IP', 'IP'])
-	camera_type = models.CharField(max_length=10, null=False, choices=CAMERA_TYPES, default='Non_IP')
+	camera_type = models.CharField(max_length=10, null=False, blank=True, choices=CAMERA_TYPES, default='Non_IP')
 	# More Info:
 	description = models.CharField(max_length=100, null=True) # Description of the camera
-	is_video = models.BooleanField() # True if camera is a video stream 
-	framerate = models.FloatField(max_length=100, null=True) # Frame rate of the camera if known
+	is_video = models.BooleanField(default=False) # True if camera is a video stream
+	framerate = models.FloatField(null=True, blank=True) # Frame rate of the camera if known
 	outdoors = models.NullBooleanField() # True if camera is outdoors Null if unknown.
 	indoors = models.NullBooleanField() # True if the camera is indoors Null if unknown.
 	traffic = models.NullBooleanField() # True if the camera is a traffic camera Null if unknown.
