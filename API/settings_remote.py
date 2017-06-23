@@ -24,17 +24,27 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 # Ensures all API requests are directed through HTTPS
 SECURE_SSL_REDIRECT = True
 
-# Static asset configuration
+# # Using white noise to collect static files on production
+# STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage' 
+
+# # Static asset configuration
+# STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+# STATIC_URL = '/static/'
+# # Extra places for collectstatic to find static files.
+# STATICFILES_DIRS = (
+#     os.path.join(BASE_DIR, 'API/static/api-view'),
+#     os.path.join(BASE_DIR, 'API/static'),
+# )
+# WHITENOISE_ROOT = os.path.join(BASE_DIR, 'staticfiles', 'root') 
+
 STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static')
 STATIC_URL = '/static/'
 # Extra places for collectstatic to find static files.
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'API/static/api-view'),
 )
-
-# Using white noise to collect static files on production
-STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage' 
-
+# https://warehouse.python.org/project/whitenoise/
+STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 
 # Ensures all API requests are directed through HTTPS
 # SECURE_SSL_REDIRECT = True
@@ -43,16 +53,15 @@ STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 GEOS_LIBRARY_PATH = os.environ.get('GEOS_LIBRARY_PATH')
 GDAL_LIBRARY_PATH = os.environ.get('GDAL_LIBRARY_PATH')
 
-
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
 # Heroku Database
 DATABASES = {
     'default': dj_database_url.config(default=os.environ['DATABASE_URL'])
 }
 # Add PostGIS engine
-DATABASES['default']['ENGINE'] = 'django.contrib.gis.db.backends.postgis'
+DATABASES['default']['ENGINE'] = 'django.contrib.gis.db.backends.postgis' 
 
-ALLOWED_HOSTS = ["tranquil-mesa-16194.herokuapp.com"]
+ALLOWED_HOSTS = ["*"]
 
 # Default Set of DEBUG is False
-DEBUG = False
+DEBUG = True
