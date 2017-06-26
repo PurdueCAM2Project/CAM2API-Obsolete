@@ -47,6 +47,6 @@ class Camera(models.Model):
 	# Image Retrieval objects:
 	# For more information see https://docs.djangoproject.com/en/1.10/ref/contrib/contenttypes/#generic-relations
 	
-	content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, null=True, related_name="retrieval_model") #ContentType table incudes Class<Non_IP> as well as Class<IP>
+	content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, null=False, blank=True, related_name="retrieval_model") #ContentType table incudes Class<Non_IP> as well as Class<IP>
 	object_id = models.PositiveIntegerField(null=True) #object_id will be automatically generated and represents the sepecfic primary key for each object in the queryset 
 	retrieval_model = GenericForeignKey('content_type', 'object_id')
