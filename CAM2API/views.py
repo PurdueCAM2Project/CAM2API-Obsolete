@@ -118,13 +118,3 @@ class CameraDetail(APIView):
 		retrieval_model_delete.delete()
 		camera.delete()
 		return(Response(status=status.HTTP_204_NO_CONTENT))
-
-	def convert_data(self,data):     #needs further modification to make it more explicit
-		if "url" in data.keys():
-			url = data.pop("url")
-			data["retrieval_model"] = {"url":url}
-		elif "port" and "ip" in data.keys():
-			port = data.pop("port")
-			ip = data.pop("ip")
-			data["retrieval_model"] = {"ip":ip, "port":port}		
-		return data 
