@@ -76,7 +76,7 @@ class CameraSerializer(serializers.ModelSerializer):
 				if 'ip' in retrieval_model_data.keys():
 					retrieval_model = IPSerializer(data=retrieval_model_data)
 					deserialized_data["camera_type"] = "IP"
-				else:
+				elif 'url' in retrieval_model_data.keys():
 					retrieval_model = NonIPSerializer(data=retrieval_model_data)
 					deserialized_data["camera_type"] = "Non_IP"
 				deserialized_data[field] = retrieval_model.to_internal_value(retrieval_model_data)

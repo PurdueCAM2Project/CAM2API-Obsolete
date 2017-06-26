@@ -29,64 +29,7 @@ class CameraList(APIView):
 		serializer = CameraSerializer(cameras, many=True)
 		return Response(serializer.data)
 
-	
 	def post(self, request, format=None):
-		"""
-		Creates new camera objects in the database and returns a HTTP 201 if success
-		input request: HTTP POST request
-		input format: optional format string included in HTTP request
-		return: HTTP 201 if the data successfully saved in the database or HTTP 400 if
-				there was an error saving the camera information to the database
-		"""
-
-		# try:
-		# 	# Create the Geospacial Object:
-		# 	lat_lng = '{{ "type": "Point", "coordinates": [ {}, {} ] }}'.format(request.data['lat'], request.data['lng'])
-		# 	lat_lng = GEOSGeometry(lat_lng)
-		# 	data = request.data
-		# 	if 'url' in data.keys():
-		# 		print("Here")
-		# 		serializer = NonIPCameraSerializer(data=data)
-		# 	else:
-		# 		print("THere")
-		# 		serializer = IPCameraSerializer(data=data)
-		# 	#serializer = CameraSerializer(data=data)
-
-		# except:
-		# 	#return(Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST))
-		# 	raise Http404
-			
-		# if serializer.is_valid():
-		# 	serializer.save()
-		# 	return(Response(serializer.data, status=status.HTTP_201_CREATED))
-		# #print(type(data))
-		# #print(type(serializer.data))
-		# return(Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST))
-
-
-		#lat_lng = '{{ "type": "Point", "coordinates": [ {}, {} ] }}'.format(request.data['lat'], request.data['lng'])
-		#lat_lng = GEOSGeometry(lat_lng)	
-		#data = self.convert_data(request.data)
-		#print(data)
-		#data.update({"lat_lng":lat_lng})
-		'''
-		if 'url' in data.keys():
-			non_ip_serializer = NonIPSerializer(data=data)
-			if non_ip_serializer.is_valid():
-				data['retrieval_model'] = non_ip_serializer.data
-				serializer = NonIPCameraSerializer(data=data)
-		else:
-			#ip_serializer = IPSerializer(data=data)
-			#if ip_serializer.is_valid():
-			#	print("First")
-			#	ip_serializer.save()
-			#	data['retrieval_model'] = ip_serializer.data
-				sub_data = {}
-				sub_data["ip"] = data.get("ip", None)
-				sub_data["port"] = data.get("port", None)
-				data['retrieval_model'] = sub_data
-				serializer = IPCameraSerializer(data=data)
-		'''
 		data = self.convert_data(request.data)
 		serializer = CameraSerializer(data=data)
 
@@ -102,9 +45,12 @@ class CameraList(APIView):
 		if "url" in data.keys():
 			url = data.pop("url")
 			data["retrieval_model"] = {"url":url}
-		elif "port" and "ip" in data.keys():
-			port = data.pop("port")
+		elif "ip" in data.keys():
 			ip = data.pop("ip")
+			if "port" in data.keys():
+				port = data.pop("port")
+			else:
+				port = 80
 			data["retrieval_model"] = {"ip":ip, "port":port}
 		return data
 
@@ -116,17 +62,6 @@ class CameraDetail(APIView):
 
 	lookup_field = ['camera_id']
 	lookup_url_kwargs = ['cd']
-
-	# def get_object(self):
-	# 	"""
-	# 	Quarries that database for a camera object matching the pk given. 
-	# 	This will search for cameras biased on the id given to them in the old database
-	# 	returns: Camera object 
-	# 	"""
-	# 	try:
-	# 		return Camera.objects.get(camera_id=pk)
-	# 	except Camera.DoesNotExist:
-	# 		raise Http404
 
 	def get_object(self):
 		lookup_url_kwargs = self.lookup_url_kwargs
